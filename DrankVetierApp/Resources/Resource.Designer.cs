@@ -41,11 +41,39 @@ namespace DrankVetierApp
 			}
 		}
 		
+		public partial class Id
+		{
+			
+			// aapt resource value: 0x7f040002
+			public const int buttonOptions = 2130968578;
+			
+			// aapt resource value: 0x7f040000
+			public const int linearLayout1 = 2130968576;
+			
+			// aapt resource value: 0x7f040003
+			public const int listViewResults = 2130968579;
+			
+			// aapt resource value: 0x7f040001
+			public const int textViewMainInfo = 2130968577;
+			
+			static Id()
+			{
+				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
+			}
+			
+			private Id()
+			{
+			}
+		}
+		
 		public partial class Layout
 		{
 			
 			// aapt resource value: 0x7f020000
 			public const int Main = 2130837504;
+			
+			// aapt resource value: 0x7f020001
+			public const int Options = 2130837505;
 			
 			static Layout()
 			{
@@ -62,6 +90,12 @@ namespace DrankVetierApp
 			
 			// aapt resource value: 0x7f030000
 			public const int app_name = 2130903040;
+			
+			// aapt resource value: 0x7f030002
+			public const int buttonOptions = 2130903042;
+			
+			// aapt resource value: 0x7f030001
+			public const int textViewMainInfo = 2130903041;
 			
 			static String()
 			{
