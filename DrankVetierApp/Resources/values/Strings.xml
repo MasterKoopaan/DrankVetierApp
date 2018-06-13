@@ -3,4 +3,10 @@
   <string name="app_name">DrankVertierApp</string>
   <string name="textViewMainInfo">There is no Config, Go to Options.</string>
   <string name="buttonOptions">Options</string>
+
+  <string name="textViewOptionsTitel">Configer:</string>
+  <string name="buttonCancel">Cancel</string>
+  <string name="buttonSave">Save</string>
+  <string name="textViewWidth">Width:</string>
+  <string name="textViewLayers">Layers:</string>
 </resources>

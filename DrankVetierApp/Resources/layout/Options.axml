@@ -2,6 +2,83 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
+    android:layout_height="match_parent"
+    android:minWidth="25px"
+    android:minHeight="25px">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout2">
+        <TextView
+            android:text="@string/textViewOptionsTitel"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/textViewOptionsTitel"
+            android:textAlignment="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+        <Button
+            android:text="@string/buttonCancel"
+            android:layout_width="80dp"
+            android:layout_height="60dp"
+            android:id="@+id/buttonCancel" />
+        <Button
+            android:text="@string/buttonSave"
+            android:layout_width="75dp"
+            android:layout_height="60dp"
+            android:layout_marginRight="10dp"
+            android:id="@+id/buttonSave" />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:id="@+id/linearLayout1">
+        <TextView
+            android:text="@string/textViewWidth"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewWidth"
+            android:layout_weight="1"
+            android:paddingTop="20dp" />
+        <EditText
+            android:inputType="number"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/editTextWidth"
+            android:layout_weight="5" />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:id="@+id/linearLayout2">
+        <TextView
+            android:text="@string/textViewLayers"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewLayers"
+            android:layout_weight="1"
+            android:paddingTop="20dp" />
+        <EditText
+            android:inputType="number"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/editTextLayers"
+            android:layout_weight="5" />
+    </LinearLayout>
+    <ListView
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:id="@+id/listViewLayers" />
 </LinearLayout>
