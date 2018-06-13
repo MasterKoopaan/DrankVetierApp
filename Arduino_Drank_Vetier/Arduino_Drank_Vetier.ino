@@ -1,5 +1,10 @@
 //Pin nummers:    0 = output  1 = input   A = analoge
-#define ledPin    9   //0, connection indication 
+#define ledPin    5   //0, connection indication 
+#define trigger1 9 //0, trigger voor ultrasone sensor 1.
+#define echo1 8 //1, echo voor ultrasone sensor 1.
+#define trigger2 7 //0, trigger voor ultrasone sensor 2
+#define echo2 6 //1, echo voor ultrasone sensor 2
+
 
 //objecten en libery:
 #include <SPI.h>                  
@@ -10,15 +15,22 @@ IPAddress ip(192, 168, 1, 3);
 EthernetServer server(ethPort);
 
 //variabelen:
+int tijd;
+float afstand;
+unsigned long previousBlinkMillis = 0; //standaardwaarde voor customDelay methode
+bool LedPinState = false;
 String InMessage;             //incoming message
 bool ConfigureSet = false;    //is there a configure
 byte Layers = 0;              //the amount of layers, max 99     
 int width = 0;                //the width of the rack, max 999
-byte span[0];            //the length of space beteen a unit per layer 
+byte span[0];            //the length of space beteen a unit per layer, max 99
 
 
 void setup() {
   Serial.begin(9600); Serial.println("Domotica project: Drank rek\n");
+    DDRB = 0x3F;
+  pinMode(trigger1, OUTPUT);
+  pinMode(echo1, INPUT);
 
   //init IO-pins:
   pinMode(ledPin, OUTPUT);
@@ -27,11 +39,11 @@ void setup() {
   digitalWrite(ledPin, LOW);
 
   //get IP adress:
-  if (Ethernet.begin(mac) == 0) {
-    //Get IP failed
-    Serial.println("No DHCP. Get IP failed");
-    Ethernet.begin(mac, ip);
-  }
+//  if (Ethernet.begin(mac) == 0) {
+//    //Get IP failed
+//    Serial.println("No DHCP. Get IP failed");
+   Ethernet.begin(mac, ip);
+//  }
   server.begin();
   Serial.print("Listening address server: "); Serial.print(Ethernet.localIP());
   Serial.print(" on port "); Serial.print(ethPort);
@@ -41,10 +53,10 @@ void loop() {
   //wait for client:
   EthernetClient UserClient = server.available();
   if (!UserClient) {
-    blink(ledPin);
+    blink(ledPin, 200, LedPinState);
     return;
   }
-  Serial.println("User connected"); digitalWrite(ledPin, LOW);
+  Serial.println("User connected"); digitalWrite(ledPin, LOW); LedPinState = false;
 
   while (UserClient.connected()) {
     while (UserClient.available())
@@ -67,7 +79,7 @@ void Read(String InMessage, EthernetClient &UserClient) {
   switch (InMessage[0]) {
     case 'c':                                   //c for configure
       
-      ConfigureSet = setConfigure(InMessage.substring(1), bigMessage);      //  vb. 3.120.07.04.12 - '.'  
+      ConfigureSet = setConfigure(InMessage.substring(1), bigMessage);      //  vb. 03.120.07.04.12 - '.'  
       UserClient.println(ConfigureSet);
       break;
     case 'a':                                   //a for amount
@@ -78,7 +90,7 @@ void Read(String InMessage, EthernetClient &UserClient) {
 }
 
 //returns if the Configure is correctie set
-bool setConfigure(String ConfigureString, bool bigmessage) {  //vb. 3120070412  -> layers(3)width(120cm)span1(7cm)span2(4)span3(12cm), maxlayers = 99, maxwidth = 999cm, maxspan = 99cm 
+bool setConfigure(String ConfigureString, bool bigmessage) {  //vb. 03120070412  -> layers(3)width(120cm)span1(7cm)span2(4)span3(12cm), maxlayers = 99, maxwidth = 999cm, maxspan = 99cm 
   if (bigmessage) {
     return true;
   } else {
@@ -102,12 +114,32 @@ String ReadLayer(int layer) {                 //vb. 002 (2), maxvalue = 999
   return Amount;
 }
 
-//read ultrasoniche sensor
+//read ultrasonische sensor
+float distance(int trigger, int echo){
 
-void blink(int pn)     //for waiting on client
-{
-  digitalWrite(pn, HIGH); 
-  delay(100); 
-  digitalWrite(pn, LOW); 
-  delay(100);
+  digitalWrite(trigger, LOW);
+  delayMicroseconds(2);
+
+  digitalWrite(trigger, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigger, LOW);
+  tijd = pulseIn(echo, HIGH, 12371);
+  afstand = tijd*0.034/2;
+
+  return afstand;
 }
+
+
+
+
+void blink(int pn, int interval, bool &pnState)     //for waiting on client
+{
+  unsigned long currentMillis = millis();
+  
+  if (currentMillis - previousBlinkMillis >= interval) {
+    digitalWrite(pn, pnState = !pnState); 
+    previousBlinkMillis = currentMillis;
+  }
+}
+
+
