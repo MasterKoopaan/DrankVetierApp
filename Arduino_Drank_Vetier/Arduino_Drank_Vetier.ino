@@ -1,9 +1,12 @@
 //Pin nummers:    0 = output  1 = input   A = analoge
-#define ledPin    9   //0, connection indication 
+#define ledPin    9   //0, connection indication
+#define servoPin  5
+#define lightPin  0
 
 //objecten en libery:
 #include <SPI.h>                  
 #include <Ethernet.h>
+#include <Servo.h>
 byte mac[] = { 0x40, 0x6c, 0x8f, 0x36, 0x84, 0x8a }; // Ethernet adapter shield S. Oosterhaven
 int ethPort = 3300; 
 IPAddress ip(192, 168, 1, 3);
@@ -14,11 +17,13 @@ String InMessage;             //incoming message
 bool ConfigureSet = false;    //is there a configure
 byte Layers = 0;              //the amount of layers, max 99     
 int width = 0;                //the width of the rack, max 999
-byte span[0];            //the length of space beteen a unit per layer 
+byte span[0];                 //the length of space beteen a unit per layer
+Servo servo1; 
 
 
 void setup() {
   Serial.begin(9600); Serial.println("Domotica project: Drank rek\n");
+  servo1.attach(servoPin);
 
   //init IO-pins:
   pinMode(ledPin, OUTPUT);
@@ -66,9 +71,10 @@ void Read(String InMessage, EthernetClient &UserClient) {
   bool bigMessage = InMessage.length() > 1;
   switch (InMessage[0]) {
     case 'c':                                   //c for configure
-      
-      ConfigureSet = setConfigure(InMessage.substring(1), bigMessage);      //  vb. 3.120.07.04.12 - '.'  
-      UserClient.println(ConfigureSet);
+      if(bigMessage){
+        ConfigureSet = setConfigure(InMessage.substring(1));      //  vb. 03.120.07.04.12 - '.'  
+        UserClient.println(ConfigureSet);
+      }
       break;
     case 'a':                                   //a for amount
       UserClient.println(getCurrentAmount());                    // 03.003.005.012 - '.'
@@ -78,12 +84,18 @@ void Read(String InMessage, EthernetClient &UserClient) {
 }
 
 //returns if the Configure is correctie set
-bool setConfigure(String ConfigureString, bool bigmessage) {  //vb. 3120070412  -> layers(3)width(120cm)span1(7cm)span2(4)span3(12cm), maxlayers = 99, maxwidth = 999cm, maxspan = 99cm 
-  if (bigmessage) {
-    return true;
-  } else {
+bool setConfigure(String ConfigureString) {  //vb. 3120070412  -> layers(3)width(120cm)span1(7cm)span2(4cm)span3(12cm), maxlayers = 99, maxwidth = 999cm, maxspan = 99cm 
+  if (ConfigureString.length() == 10){
+      Layers = ConfigureString.substring(0,1).toInt(); //sets layers
+      width = ConfigureString.substring(2,4).toInt(); //sets width
+      for (int i = 0; i < 3; i++){
+        span[i] = ConfigureString.substring(5 + (2 * i), 5 + (2 * i + 1)).toInt(); //sets span
+      }
+      return true;
+  }
+  else{
     return false;
-  } 
+  }
 }
 
 //return the current amount in storage
@@ -111,3 +123,26 @@ void blink(int pn)     //for waiting on client
   digitalWrite(pn, LOW); 
   delay(100);
 }
+
+//servo
+
+void changeFlag(bool doRaise){  //true raises the flag and visa versa
+  if(doRaise){
+    servo1.write(179);
+  }7
+  else if(doRaise == false){
+    servo1.write(0);
+  }
+}
+
+//light sensor
+
+bool fridgeClosed(int acceptanceValue){ //acceptanceValue is the maximum accepted lightlevel to return "Closed"
+  if(analogRead(lightPin) < acceptanceValue){
+    return true;
+  }
+  else{
+    return false;
+  }
+}
+
