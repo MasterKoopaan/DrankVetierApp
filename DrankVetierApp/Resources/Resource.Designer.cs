@@ -44,17 +44,20 @@ namespace DrankVetierApp
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f040006
-			public const int buttonCancel = 2130968582;
+			// aapt resource value: 0x7f040005
+			public const int buttonCancel = 2130968581;
+			
+			// aapt resource value: 0x7f04000d
+			public const int buttonMin = 2130968589;
 			
 			// aapt resource value: 0x7f040002
 			public const int buttonOptions = 2130968578;
 			
+			// aapt resource value: 0x7f04000c
+			public const int buttonPlus = 2130968588;
+			
 			// aapt resource value: 0x7f040007
 			public const int buttonSave = 2130968583;
-			
-			// aapt resource value: 0x7f04000b
-			public const int editTextLayers = 2130968587;
 			
 			// aapt resource value: 0x7f040009
 			public const int editTextWidth = 2130968585;
@@ -65,8 +68,8 @@ namespace DrankVetierApp
 			// aapt resource value: 0x7f040004
 			public const int linearLayout2 = 2130968580;
 			
-			// aapt resource value: 0x7f04000c
-			public const int listViewLayers = 2130968588;
+			// aapt resource value: 0x7f04000e
+			public const int listViewLayers = 2130968590;
 			
 			// aapt resource value: 0x7f040003
 			public const int listViewResults = 2130968579;
@@ -74,11 +77,14 @@ namespace DrankVetierApp
 			// aapt resource value: 0x7f04000a
 			public const int textViewLayers = 2130968586;
 			
+			// aapt resource value: 0x7f04000b
+			public const int textViewLayersValue = 2130968587;
+			
 			// aapt resource value: 0x7f040001
 			public const int textViewMainInfo = 2130968577;
 			
-			// aapt resource value: 0x7f040005
-			public const int textViewOptionsTitel = 2130968581;
+			// aapt resource value: 0x7f040006
+			public const int textViewOptionsTitel = 2130968582;
 			
 			// aapt resource value: 0x7f040008
 			public const int textViewWidth = 2130968584;
@@ -121,8 +127,14 @@ namespace DrankVetierApp
 			// aapt resource value: 0x7f030004
 			public const int buttonCancel = 2130903044;
 			
+			// aapt resource value: 0x7f030009
+			public const int buttonMin = 2130903049;
+			
 			// aapt resource value: 0x7f030002
 			public const int buttonOptions = 2130903042;
+			
+			// aapt resource value: 0x7f030008
+			public const int buttonPlus = 2130903048;
 			
 			// aapt resource value: 0x7f030005
 			public const int buttonSave = 2130903045;

@@ -16,28 +16,39 @@ namespace DrankVetierApp
     public class RackConfig
     {
         private int Width;      //max = 999
-        private string sWidth;
         private int LayersCount;     //max = 99
-        private string sLayerCount;
-        private Layer[] Layers; 
+        private List<Layer> Layers; 
 
-        public RackConfig(int Width, int LayersCount)
+        public RackConfig(int Width, int LayersCount, string LayerInfo)
         {
             this.Width = Width;
-            string sValue = Convert.ToString(Width);
-            if (sValue.Length < 3) {
-                if (sValue.Length < 2) {
-                    sValue = "00" + sValue;
-                } else {
-                    sValue = "0" + sValue;
-                }
-            }
-            sWidth = sValue;
             this.LayersCount = LayersCount;
-            sLayerCount = LayersCount.ToString().Length < 2 ? "0" + LayersCount.ToString() : LayersCount.ToString();
-            Layers = new Layer[LayersCount];
+            Layers = new List<Layer>();
+            foreach (string layerI in LayerInfo.Split('|'))
+            {
+                string[] layerValues = layerI.Split(':');
+                Layers.Add(new Layer(Convert.ToInt32(layerValues[0]), layerValues[1]));
+            }
+            
         }
-        
+
+        public int GetWidth()
+        {
+            return Width;
+        }
+        public int GetLayersCount()
+        {
+            return LayersCount;
+        }
+        public void SetWidth(int Width)
+        {
+            this.Width = Width;
+        }
+        public void SetLayersCount(int LayersCount)
+        {
+            this.LayersCount = LayersCount;
+        }
+
         public string getConfig()
         {
             string config = Convert.ToString(LayersCount);
@@ -46,6 +57,17 @@ namespace DrankVetierApp
             if (value.Length < 2) config = "0" + value;
             return config;
         }
+
+        public string GetLayersInfo()
+        {
+            string LayerInfo = "";
+            foreach (Layer layer in Layers)
+            {
+                LayerInfo += layer.GetLayerInfo() + "|";
+            }
+            LayerInfo.Remove(LayerInfo.Length - 1, 1);
+            return LayerInfo;
+        }
     }
 
     public class Layer
@@ -53,5 +75,25 @@ namespace DrankVetierApp
         private string name;
         private int span;
 
+        public Layer(int span, string name)
+        {
+            this.span = span;
+            this.name = name;
+        }
+
+        public string GetLayerInfo()
+        {
+            return name + ":" + Convert.ToString(span);
+        }
+
+        public string GetName()
+        {
+            return name;
+        }
+
+        public int GetSpan()
+        {
+            return span;
+        }
     }
 }

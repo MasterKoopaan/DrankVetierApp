@@ -10,6 +10,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/linearLayout2">
+        <Button
+            android:text="@string/buttonCancel"
+            android:layout_width="80dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/buttonCancel" />
         <TextView
             android:text="@string/textViewOptionsTitel"
             android:textAppearance="?android:attr/textAppearanceLarge"
@@ -18,11 +24,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
-        <Button
-            android:text="@string/buttonCancel"
-            android:layout_width="80dp"
-            android:layout_height="60dp"
-            android:id="@+id/buttonCancel" />
         <Button
             android:text="@string/buttonSave"
             android:layout_width="75dp"
@@ -50,7 +51,9 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/editTextWidth"
-            android:layout_weight="5" />
+            android:layout_weight="5"
+            android:maxLength="3"
+            android:numeric="integer" />
     </LinearLayout>
     <LinearLayout
         android:orientation="horizontal"
@@ -63,16 +66,31 @@
             android:text="@string/textViewLayers"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:id="@+id/textViewLayers"
             android:layout_weight="1"
             android:paddingTop="20dp" />
-        <EditText
-            android:inputType="number"
+        <TextView
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:id="@+id/editTextLayers"
-            android:layout_weight="5" />
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:paddingTop="20dp"
+            android:id="@+id/textViewLayersValue"
+            android:maxLength="2" />
+        <Button
+            android:text="@string/buttonPlus"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:id="@+id/buttonPlus"
+            android:textSize="25dp" />
+        <Button
+            android:text="@string/buttonMin"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:id="@+id/buttonMin"
+            android:textSize="25dp" />
     </LinearLayout>
     <ListView
         android:minWidth="25px"

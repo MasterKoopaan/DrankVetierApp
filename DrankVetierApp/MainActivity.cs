@@ -13,6 +13,8 @@ namespace DrankVetierApp
     [Activity(Label = "DrankVertierApp", MainLauncher = true)]
     public class MainActivity : Activity
     {
+        //https://www.youtube.com/watch?v=rYxWSV-x65I https://www.youtube.com/watch?v=s6mPvaxvLXQ https://docs.microsoft.com/en-us/xamarin/xamarin-forms/app-fundamentals/files?tabs=vswin https://www.youtube.com/watch?v=sk9fRXu53Qs
+
         public RackConfig rackConfig;
         Socket socket = null;
         Timer timerSockets;
@@ -105,6 +107,22 @@ namespace DrankVetierApp
                     UpdateConnectionState(4);
                 }
             });
+        }
+
+        public RackConfig GetConfig()
+        {
+            var MyRackConfig = Application.Context.GetSharedPreferences("MyRackConfig", FileCreationMode.Private);
+            int width = Convert.ToInt32(MyRackConfig.GetString("Width", "0"));
+            int layersCount = Convert.ToInt32(MyRackConfig.GetString("LayersCount", "0"));
+            string layersInfo = MyRackConfig.GetString("LayersInfo", "0");
+            if (width != 0 && layersCount != 0 && layersInfo != "0")
+            {
+                return new RackConfig(width, layersCount, layersInfo);
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

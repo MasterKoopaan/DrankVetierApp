@@ -9,4 +9,6 @@
   <string name="buttonSave">Save</string>
   <string name="textViewWidth">Width:</string>
   <string name="textViewLayers">Layers:</string>
+  <string name="buttonPlus">+</string>
+  <string name="buttonMin">-</string>
 </resources>
