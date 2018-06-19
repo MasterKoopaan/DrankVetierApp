@@ -59,6 +59,12 @@ namespace DrankVetierApp
 			// aapt resource value: 0x7f040007
 			public const int buttonSave = 2130968583;
 			
+			// aapt resource value: 0x7f040011
+			public const int editTextName = 2130968593;
+			
+			// aapt resource value: 0x7f040010
+			public const int editTextSpan = 2130968592;
+			
 			// aapt resource value: 0x7f040009
 			public const int editTextWidth = 2130968585;
 			
@@ -69,10 +75,13 @@ namespace DrankVetierApp
 			public const int linearLayout2 = 2130968580;
 			
 			// aapt resource value: 0x7f04000e
-			public const int listViewLayers = 2130968590;
+			public const int listViewConfigure = 2130968590;
 			
 			// aapt resource value: 0x7f040003
 			public const int listViewResults = 2130968579;
+			
+			// aapt resource value: 0x7f04000f
+			public const int textViewLayer = 2130968591;
 			
 			// aapt resource value: 0x7f04000a
 			public const int textViewLayers = 2130968586;
@@ -107,6 +116,9 @@ namespace DrankVetierApp
 			
 			// aapt resource value: 0x7f020001
 			public const int Options = 2130837505;
+			
+			// aapt resource value: 0x7f020002
+			public const int Options_Item = 2130837506;
 			
 			static Layout()
 			{

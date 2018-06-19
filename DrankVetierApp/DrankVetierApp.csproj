@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdapterLayersConfig.cs" />
+    <Compile Include="ListViewConfigure_Adapter.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="OptionsActivity.cs" />
     <Compile Include="RackConfig.cs" />
@@ -67,6 +68,9 @@
     <None Include="Properties\AndroidManifest.xml" />
     <None Include="Assets\AboutAssets.txt" />
     <AndroidResource Include="Resources\layout\Options.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\Options_Item.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

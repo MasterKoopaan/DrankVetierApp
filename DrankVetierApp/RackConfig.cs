@@ -17,7 +17,7 @@ namespace DrankVetierApp
     {
         private int Width;      //max = 999
         private int LayersCount;     //max = 99
-        private List<Layer> Layers; 
+        public List<Layer> Layers; 
 
         public RackConfig(int Width, int LayersCount, string LayerInfo)
         {

@@ -4,7 +4,7 @@
   <string name="textViewMainInfo">There is no Config, Go to Options.</string>
   <string name="buttonOptions">Options</string>
 
-  <string name="textViewOptionsTitel">Configer:</string>
+  <string name="textViewOptionsTitel">Configure:</string>
   <string name="buttonCancel">Cancel</string>
   <string name="buttonSave">Save</string>
   <string name="textViewWidth">Width:</string>
