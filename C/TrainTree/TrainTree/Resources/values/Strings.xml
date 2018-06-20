@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">TrainTree</string>
+  <string name="textViewMessage">Log Message</string>
+  <string name="editTextIp">100000000000</string>
+  <string name="editTextPoort">3000</string>
+</resources>

@@ -53,6 +53,9 @@ namespace DrankVetierApp
             adapter = new ListViewConfigure_Adapter(this, config.Layers);
             listViewConfigure.Adapter = adapter;
 
+            //listViewConfigure.event += subscibe 
+
+            //change the amount of Width
             editTextWidth.TextChanged += (slender, e) => {
                 string widthText = editTextWidth.Text;
                 if (widthText != "")

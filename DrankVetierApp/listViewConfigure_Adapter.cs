@@ -65,6 +65,8 @@ namespace DrankVetierApp
             holder.Span.Text = Convert.ToString(Layers[position].GetSpan());
             holder.Name.Text = Layers[position].GetName();
 
+            //holder.Name.AddTextChangedListener
+
             return view;
         }
 
@@ -77,6 +79,10 @@ namespace DrankVetierApp
             }
         }
 
+        protected virtual void OnAfterTextChanced()
+        {
+            if (AfterTextChanged)
+        }
     }
 
     class ListViewConfigure_AdapterViewHolder : Java.Lang.Object
