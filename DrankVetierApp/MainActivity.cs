@@ -1,4 +1,4 @@
-﻿using Android.App;
+using Android.App;
 using Android.Widget;
 using Android.OS;
 using System.Net.Sockets;
@@ -15,13 +15,15 @@ namespace DrankVetierApp
     {
         //https://www.youtube.com/watch?v=rYxWSV-x65I https://www.youtube.com/watch?v=s6mPvaxvLXQ https://docs.microsoft.com/en-us/xamarin/xamarin-forms/app-fundamentals/files?tabs=vswin https://www.youtube.com/watch?v=sk9fRXu53Qs
 
+        // Initialize Object
         public RackConfig rackConfig;
+        public RackData rackData;
         Socket socket = null;
         Timer timerSockets;
 
-        TextView textViewMainInfo;
-        Button buttonOptions;
+        Button buttonConnect, buttonUpdate, buttonExtra, buttonOptions;
         ListView listViewResults;
+        TextView textViewConnectie, textViewUpdated;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -30,12 +32,33 @@ namespace DrankVetierApp
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
 
-            textViewMainInfo = FindViewById<TextView>(Resource.Id.textViewMainInfo);
+            // Get view items
+            buttonConnect = FindViewById<Button>(Resource.Id.buttonConnect);
+            buttonUpdate = FindViewById<Button>(Resource.Id.buttonUpdate);
+            buttonExtra = FindViewById<Button>(Resource.Id.buttonExtra);
             buttonOptions = FindViewById<Button>(Resource.Id.buttonOptions);
             //buttonOptions.SetBackgroundColor(Android.Graphics.Color.Red);
             //buttonOptions.BackgroundTintMode = ColorStateList.ValueOf(Color.HoloRedLight); 
             listViewResults = FindViewById<ListView>(Resource.Id.listViewResults);
+            textViewConnectie = FindViewById<TextView>(Resource.Id.textViewConnectie);
+            textViewUpdated = FindViewById<TextView>(Resource.Id.textViewUpdated);
 
+            // Get config en data
+            rackConfig = GetConfig();
+            rackData = GetData();
+
+            // Update ListViewResults
+            if (rackConfig == null)
+            {
+                ArrayAdapter noConfigAdapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, new string[] { "There is no Config, Go to Options." });
+                listViewResults.Adapter = noConfigAdapter;
+            } else 
+            {
+                ListViewResults_Adapter ConfigAdapter = new ListViewResults_Adapter(this, new Rack(rackConfig.Layers, rackData.amounts));
+                listViewResults.Adapter = ConfigAdapter;
+            }
+
+            // Go to options to set config
             buttonOptions.Click += (slender, e) =>
             {
                 Intent nextActivityOptions = new Intent(this, typeof(OptionsActivity));
@@ -124,6 +147,31 @@ namespace DrankVetierApp
                 return null;
             }
         }
+
+        //!Maak een static class!
+        public RackData SetData(string data) //Incoming data sturcture: 03 002004010 - layers, amount layersX
+        {
+            int layerscount = Convert.ToInt32(data.Substring(0, 2));
+            if (rackConfig.GetLayersCount() != layerscount)
+            {
+                return null;
+            }
+            int[] amount = new int[layerscount];
+            for (int i = 2; i < layerscount; i += 3)
+            {
+                amount[i] = Convert.ToInt32(data.Substring(i, 3));
+            }
+            return new RackData(amount, DateTime.Now);
+        }
+
+        public void SaveData()
+        {
+
+        }
+
+        public RackData GetData()
+        {
+            return null;
+        }
     }
 }
-

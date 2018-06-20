@@ -54,11 +54,12 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdapterLayersConfig.cs" />
     <Compile Include="ListViewConfigure_Adapter.cs" />
+    <Compile Include="ListViewResults_Adapter.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="OptionsActivity.cs" />
     <Compile Include="RackConfig.cs" />
+    <Compile Include="RackData.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -71,6 +72,9 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\Options_Item.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\Main_item.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

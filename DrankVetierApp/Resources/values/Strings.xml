@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">DrankVertierApp</string>
-  <string name="textViewMainInfo">There is no Config, Go to Options.</string>
+      <string name="textViewMainInfo">There is no Config, Go to Options.</string>
+  <string name="buttonConnect">Connect</string>
+  <string name="buttonUpdate">Update</string>
+  <string name="buttonExtra">Extra</string>
   <string name="buttonOptions">Options</string>
+  <string name="textViewConnectie">Not Connected</string>
+  <string name="textViewUpdated">Last updated: --</string>
 
   <string name="textViewOptionsTitel">Configure:</string>
   <string name="buttonCancel">Cancel</string>
@@ -10,5 +15,5 @@
   <string name="textViewWidth">Width:</string>
   <string name="textViewLayers">Layers:</string>
   <string name="buttonPlus">+</string>
-  <string name="buttonMin">-</string>
+  <string name="buttonMin">-</string> 
 </resources>

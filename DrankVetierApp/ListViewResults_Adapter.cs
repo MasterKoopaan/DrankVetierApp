@@ -12,24 +12,18 @@ using Android.Widget;
 
 namespace DrankVetierApp
 {
-    class ListViewConfigure_Adapter : BaseAdapter<Layer>
+    class ListViewResults_Adapter : BaseAdapter
     {
 
         Context context;
-        List<Layer> Layers;
+        List<Layer> layers;
+        int[] amounts;
 
-        public ListViewConfigure_Adapter(Context context, List<Layer> Layers)
+        public ListViewResults_Adapter(Context context, Rack rack)
         {
             this.context = context;
-            this.Layers = Layers;
-        }
-
-        public override Layer this[int position]
-        {
-            get
-            {
-                return Layers[position];
-            }
+            layers = rack.layers;
+            amounts = rack.amounts;
         }
 
         public override Java.Lang.Object GetItem(int position)
@@ -45,27 +39,28 @@ namespace DrankVetierApp
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
             var view = convertView;
-            ListViewConfigure_AdapterViewHolder holder = null;
+            ListViewResults_Adapter_NoDataViewHolder holder = null;
 
             if (view != null)
-                holder = view.Tag as ListViewConfigure_AdapterViewHolder;
+                holder = view.Tag as ListViewResults_Adapter_NoDataViewHolder;
 
             if (holder == null)
             {
-                holder = new ListViewConfigure_AdapterViewHolder();
+                holder = new ListViewResults_Adapter_NoDataViewHolder();
                 var inflater = context.GetSystemService(Context.LayoutInflaterService).JavaCast<LayoutInflater>();
-                view = inflater.Inflate(Resource.Layout.Options_Item, parent, false);
+                view = inflater.Inflate(Resource.Layout.Main_item, parent, false);
                 holder.Layer = view.FindViewById<TextView>(Resource.Id.textViewLayer);
-                holder.Span = view.FindViewById<EditText>(Resource.Id.editTextSpan);
-                holder.Name = view.FindViewById<EditText>(Resource.Id.editTextName);
+                holder.Amount = view.FindViewById<TextView>(Resource.Id.textViewAmount);
+                holder.Name = view.FindViewById<TextView>(Resource.Id.textViewName);
                 view.Tag = holder;
             }
 
             holder.Layer.Text = Convert.ToString(position + 1) + ".";
-            holder.Span.Text = Convert.ToString(Layers[position].GetSpan());
-            holder.Name.Text = Layers[position].GetName();
-
-            //holder.Name.AddTextChangedListener
+            if (amounts != null)
+            {
+                holder.Amount.Text = Convert.ToString(amounts[position]);
+            }
+            holder.Name.Text = layers[position].GetName();
 
             return view;
         }
@@ -75,16 +70,15 @@ namespace DrankVetierApp
         {
             get
             {
-                return Layers.Count();
+                return layers.Count();
             }
         }
     }
 
-    class ListViewConfigure_AdapterViewHolder : Java.Lang.Object
+    class ListViewResults_Adapter_NoDataViewHolder : Java.Lang.Object
     {
         public TextView Layer { get; set; }
-        public EditText Span { get; set; }
-        public EditText Name { get; set; }
+        public TextView Amount { get; set; }
+        public TextView Name { get; set; }
     }
-
 }

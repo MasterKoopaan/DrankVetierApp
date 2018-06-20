@@ -22,21 +22,24 @@
             android:paddingTop="10dp"
             android:layout_weight="12"
             android:id="@+id/textViewLayer" />
-        <EditText
-            android:inputType="number"
+        <TextView
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="50dp"
             android:layout_weight="23"
+            android:paddingTop="10dp"
             android:layout_marginRight="10dp"
-            android:id="@+id/editTextSpan"
+            android:id="@+id/textViewAmount"
             android:maxLength="2"
-            android:textAlignment="center" />
-        <EditText
-            android:inputType="text"
+            android:textAlignment="center"
+            android:text="--" />
+        <TextView
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="50dp"
+            android:paddingTop="10dp"
             android:layout_weight="65"
             android:textAlignment="center"
-            android:id="@+id/editTextName" />
+            android:id="@+id/textViewName" />
     </LinearLayout>
 </LinearLayout>
