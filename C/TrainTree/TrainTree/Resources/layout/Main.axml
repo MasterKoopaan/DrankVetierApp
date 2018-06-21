@@ -16,13 +16,14 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_width="0dp"
             android:layout_height="45dp"
-            android:layout_paddingTop="10dp"
+            android:paddingTop="10dp"
             android:layout_weight="8"
             android:id="@+id/textViewIp" />
         <EditText
-            android:inputType="Number"
+            android:inputType="numberDecimal"
+            android:digits="0123456789."
             android:text="@string/editTextIp"
-            android:id="@+id/editTextIp"
+            android:id="@+id/editTextIPAddress"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginRight="10dp"
@@ -32,15 +33,16 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_width="0dp"
             android:layout_height="45dp"
-            android:layout_paddingTop="10dp"
+            android:paddingTop="10dp"
             android:layout_weight="16"
             android:id="@+id/textViewPoort" />
         <EditText
-            android:inputType="Number"
+            android:inputType="numberDecimal"
+            android:digits="0123456789."
             android:text="@string/editTextPoort"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:id="@+id/editTextPoort"
+            android:id="@+id/editTextIPPort"
             android:layout_weight="24"
             android:maxLength="4" />
     </LinearLayout>
@@ -50,12 +52,26 @@
         android:layout_height="wrap_content"
         android:id="@+id/buttonConnect" />
     <TextView
-        android:text="@string/textViewMessage"
+        android:text="@string/textViewServerConnect"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="15dp"
-        android:id="@+id/textViewMessage" />
+        android:id="@+id/textViewServerConnect" />
+    <TextView
+        android:text="@string/textViewSensor"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:id="@+id/textViewSensor" />
+    <TextView
+        android:text="@string/textViewServo"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:id="@+id/textViewServo" />
     <Button
         android:text="Toggle"
         android:layout_width="match_parent"
