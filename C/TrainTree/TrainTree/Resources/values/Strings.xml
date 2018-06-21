@@ -4,6 +4,8 @@
   <string name="textViewServerConnect">Log Message</string>
   <string name="editTextIp">192.168.0.100</string>
   <string name="editTextPoort">3300</string>
-  <string name="textViewSensor">3300</string>
-  <string name="textViewServo">3300</string>
+  <string name="textViewSensor">0</string>
+  <string name="textViewServo">0</string>
+  <string name="textViewDistance">Distance(cm):</string>
+  <string name="textViewGate">Gate(angle):</string>
 </resources>

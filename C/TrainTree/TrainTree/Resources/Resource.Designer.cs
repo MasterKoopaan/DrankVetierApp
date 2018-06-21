@@ -47,8 +47,8 @@ namespace TrainTree
 			// aapt resource value: 0x7f040005
 			public const int buttonConnect = 2130968581;
 			
-			// aapt resource value: 0x7f040009
-			public const int buttonToggle = 2130968585;
+			// aapt resource value: 0x7f04000b
+			public const int buttonToggle = 2130968587;
 			
 			// aapt resource value: 0x7f040002
 			public const int editTextIPAddress = 2130968578;
@@ -59,20 +59,26 @@ namespace TrainTree
 			// aapt resource value: 0x7f040000
 			public const int linearLayout1 = 2130968576;
 			
+			// aapt resource value: 0x7f040007
+			public const int textViewDistance = 2130968583;
+			
+			// aapt resource value: 0x7f040009
+			public const int textViewGate = 2130968585;
+			
 			// aapt resource value: 0x7f040001
 			public const int textViewIp = 2130968577;
 			
 			// aapt resource value: 0x7f040003
 			public const int textViewPoort = 2130968579;
 			
-			// aapt resource value: 0x7f040007
-			public const int textViewSensor = 2130968583;
+			// aapt resource value: 0x7f040008
+			public const int textViewSensor = 2130968584;
 			
 			// aapt resource value: 0x7f040006
 			public const int textViewServerConnect = 2130968582;
 			
-			// aapt resource value: 0x7f040008
-			public const int textViewServo = 2130968584;
+			// aapt resource value: 0x7f04000a
+			public const int textViewServo = 2130968586;
 			
 			static Id()
 			{
@@ -111,6 +117,12 @@ namespace TrainTree
 			
 			// aapt resource value: 0x7f030003
 			public const int editTextPoort = 2130903043;
+			
+			// aapt resource value: 0x7f030006
+			public const int textViewDistance = 2130903046;
+			
+			// aapt resource value: 0x7f030007
+			public const int textViewGate = 2130903047;
 			
 			// aapt resource value: 0x7f030004
 			public const int textViewSensor = 2130903044;

@@ -59,12 +59,26 @@
         android:layout_marginBottom="15dp"
         android:id="@+id/textViewServerConnect" />
     <TextView
+        android:text="@string/textViewDistance"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:id="@+id/textViewDistance" />
+    <TextView
         android:text="@string/textViewSensor"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="15dp"
         android:id="@+id/textViewSensor" />
+    <TextView
+        android:text="@string/textViewGate"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:id="@+id/textViewGate" />
     <TextView
         android:text="@string/textViewServo"
         android:textAppearance="?android:attr/textAppearanceMedium"

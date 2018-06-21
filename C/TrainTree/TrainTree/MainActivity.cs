@@ -24,9 +24,10 @@ namespace TrainTree
         // Controls on GUI
         Button buttonConnect;
         Button buttonToggle;
-        TextView textViewServerConnect, textViewTimerStateValue, textViewSensor, textViewServo;
+        TextView textViewServerConnect, textViewTimerStateValue;
+        public TextView textViewSensor, textViewServo;
         EditText editTextIPAddress, editTextIPPort;
-
+        byte command = 0;                            // regulates which command is send by timer
         Timer timerSockets;                         // Timers   
         Socket socket = null;                       // Socket   
         List<Tuple<string, TextView>> commandList = new List<Tuple<string, TextView>>();  // List for commands and response places on UI
@@ -54,16 +55,19 @@ namespace TrainTree
 
             // timer object, check Arduino state
             // Only one command can be serviced in an timer tick, schedule from list
-            timerSockets = new System.Timers.Timer() { Interval = 10000, Enabled = false }; // Interval >= 750
+            timerSockets = new System.Timers.Timer() { Interval = 2000, Enabled = false }; // Interval >= 750
             timerSockets.Elapsed += (obj, args) =>
             {
+                Console.WriteLine("Elapsed");
                 //RunOnUiThread(() =>
                 //{
                 if (socket != null) // only if socket exists
                 {
-                    for (int i = 0; i < commandList.Count; i++)
+                    UpdateGUI(executeCommand(commandList[command].Item1), commandList[command].Item2);
+                    command++;
+                    if (command == commandList.Count)
                     {
-                        UpdateGUI(executeCommand(commandList[i].Item1), commandList[i].Item2);
+                        command = 0;
                     }
 
                     // Send a command to the Arduino server on every tick (loop though list)
@@ -109,6 +113,7 @@ namespace TrainTree
             {
                 //Send command to server
                 socket.Send(Encoding.ASCII.GetBytes(cmd));
+                Console.WriteLine(cmd);
 
                 try //Get response from server
                 {
@@ -182,6 +187,7 @@ namespace TrainTree
                 else textview.SetTextColor(Color.White);
                 textview.Text = result;
             });
+
         }
 
         // Connect to socket ip/prt (simple sockets)
@@ -198,11 +204,13 @@ namespace TrainTree
                         socket.Connect(new IPEndPoint(IPAddress.Parse(ip), Convert.ToInt32(prt)));
                         if (socket.Connected)
                         {
-                            UpdateConnectionState(2, "Connected");    
+                            UpdateConnectionState(2, "Connected");
+                            timerSockets.Enabled = true;
                         }
                     }
                     catch (Exception exception)
                     {
+                        timerSockets.Enabled = false;
                         if (socket != null)
                         {
                             socket.Close();

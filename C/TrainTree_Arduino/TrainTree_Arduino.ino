@@ -57,8 +57,10 @@ EthernetServer server(ethPort);              // EthernetServer instance (listeni
 
 char actionDevice = 'A';                 // Variable to store Action Device id ('A', 'B', 'C')
 bool toggled = false;
-float result;
+float threshold;
+int result;
 int minD, maxD;
+byte counter;
 Servo servo1;
 
 void setup()
@@ -84,14 +86,18 @@ void setup()
   digitalWrite(ledPin, LOW);
   digitalWrite(infoPin, LOW);
 
-  if ((result = DistanceAv()) < 0){
-    minD = 10;
-    maxD = 20;
+  while(counter < 5){
+    result = Distance(trigPin, echoPin);
+    if(result != -1){
+      threshold += result;
+      Serial.println(threshold);
+      counter++;
+    }
   }
-  else{
-    minD = round(result) - 5;
-    maxD = round(result) + 5;
-  }
+  threshold /= 5.00;
+  counter = 0;
+  minD = round(threshold) - 5;
+  maxD = round(threshold) + 5;
 
   //Try to get an IP address from the DHCP server.
   if (Ethernet.begin(mac) == 0)
@@ -121,21 +127,21 @@ void setup()
 
 void loop()
 {
-   if (!toggled)
-   {
-      result = Distance(trigPin, echoPin);
-      Serial.print("Distance: ");
-      Serial.print(round(result));
-      Serial.println("cm.");
-      Serial.print("Servo:");
-      Serial.println(servo1.read());
-      Run(result, minD, maxD);
-      delay(500);
-      Serial.println("false");
-   }
-   else{
-      Serial.println("true");
-   }
+  if (!toggled)
+  {
+    result = Distance(trigPin, echoPin);
+    //Serial.print("Distance: ");
+    //Serial.print(round(result));
+    //Serial.println("cm.");
+    //Serial.print("Servo:");
+    //Serial.println(servo1.read());
+    Run(result, minD, maxD);
+    delay(100);
+    //Serial.println("false");
+  }
+  else {
+    //Serial.println("true");
+  }
   // Listen for incomming connection (app)
   EthernetClient ethernetClient = server.available();
   if (!ethernetClient) {
@@ -151,13 +157,13 @@ void loop()
   {
     if (!toggled) {
       result = Distance(trigPin, echoPin);
-      Serial.print("Distance: ");
-      Serial.print(round(result));
-      Serial.println("cm.");
-      Serial.print("Servo:");
-      Serial.println(servo1.read());
+      //Serial.print("Distance: ");
+      //Serial.print(round(result));
+      //Serial.println("cm.");
+      //Serial.print("Servo:");
+      //Serial.println(servo1.read());
       Run(result, minD, maxD);
-      delay(500);
+      delay(100);
     }
 
     // Execute when byte is received.
@@ -186,13 +192,15 @@ void executeCommand(char cmd)
       servo1.write(0);
       delay(10000);
       servo1.write(179);
-       
-      case 'u':
-      server.write(round(result));
+
+    case 'u':
+      intToCharBuf(round(result), buf, 4);
+      server.write(buf, 4);
       break;
-      
-      case 's':
-      server.write(servo1.read());
+
+    case 's':
+      intToCharBuf(servo1.read(), buf, 4);
+      server.write(buf, 4);
       break;
     default:
       digitalWrite(infoPin, LOW);
@@ -249,11 +257,23 @@ int getIPComputerNumberOffset(IPAddress address, int offset)
   return getIPComputerNumber(address) - offset;
 }
 
+// Convert int <val> char buffer with length <len>
+void intToCharBuf(int val, char buf[], int len)
+{
+  String s;
+  s = String(val);                        // convert tot string
+  if (s.length() == 1) s = "0" + s;       // prefix redundant "0"
+  if (s.length() == 2) s = "0" + s;
+  s = s + "\n";                           // add newline
+  s.toCharArray(buf, len);                // convert string to char-buffer
+}
+
+
 float Distance(int trigger, int echoer) {
   digitalWrite(trigger, HIGH);
   delayMicroseconds(10);
   digitalWrite(trigger, LOW);
-  int distance = (int)(pulseIn(echoer, HIGH, 12371) / 2.0) * 0.03435;
+  int distance = (int)(pulseIn(echoer, HIGH, 6200) / 2.0) * 0.03435;
   if (distance != 0) {
     return distance;
   }
@@ -262,39 +282,33 @@ float Distance(int trigger, int echoer) {
   }
 }
 
-float DistanceAv(int trigger, int echoer) {
-  int i = 0, minimum = 9999, maximum = -2, afstand, totaal;
-  bool b = true;
-  while (i < 6 && b) {
-    afstand = Distance(trigger, echoer);
-    if (afstand != -1) {
-      minimum = min(minimum , afstand);
-      maximum = max(maximum , afstand);
-      totaal += afstand;
-      i++;
-    }
-    else {
-      b = false;
-    }
-  }
-  if (b) {
-    return (float) totaal / 4.0;
-  }
-  else {
-    return -1.00;
-  }
-}
-
-void Run(float distance, int MinAcceptance, int MaxAcceptance) {
+void Run(int distance, int MinAcceptance, int MaxAcceptance) {
+  //Serial.print(MinAcceptance);
+  //Serial.print("<");
+  //Serial.print(distance);
+  //Serial.print("&&");
+  //Serial.print(distance);
+  //Serial.print("<");
+  //Serial.println(MaxAcceptance);
   if (MinAcceptance < distance && distance < MaxAcceptance) {
-    servo1.write(0);
+    if (counter == 4) {
+      servo1.write(0);
+      Serial.println("dicht");
+      counter = 0;
+    }
+    else{
+      Serial.println(counter);
+      counter++;
+    }
   }
   else {
     servo1.write(179);
+    Serial.println("open");
+    counter = 0;
   }
 }
 
-void blink(int pin){
+void blink(int pin) {
   digitalWrite(pin, HIGH);
   delay(500);
   digitalWrite(pin, LOW);
