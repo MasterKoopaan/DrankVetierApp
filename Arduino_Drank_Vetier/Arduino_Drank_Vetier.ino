@@ -1,20 +1,15 @@
 //Pin nummers:    0 = output  1 = input   A = analoge
-#define ledPin    10    //0, connection indication
-#define trigger1  9     //0, trigger voor ultrasone sensor 1.
-#define echo1     8     //1, echo voor ultrasone sensor 1.
-#define trigger2  7     //0, trigger voor ultrasone sensor 2
-#define echo2     6     //1, echo voor ultrasone sensor 2
+#define ledPin    9    //0, connection indication
 
-//#define trigger   2
-//#define echo      3
+#define ultrasoneSensorenCount 2  //de aantal ultrasonice sensors
+int triggerPins[3] = {2, 4, 6};   //0, trigger pins voor ultrasone sensors
+int echoPins[3] = {3, 5, 7};      //1, echo pins voor ultrasone sensors
 
-#define servoPin  1     //0, output voor servo motor
-#define buzzerPin 0     //0, output voor buzzer
+#define servoPin  6     //0, output voor servo motor
+#define buzzerPin 7     //0, output voor buzzer
 
 #define tempPin   1     //A, leest temperatuur waardes;
 #define lightPin  0     //A, analoog voor lichtsensor
-
-
 
 //objecten en libery:
 #include <SPI.h>                  
@@ -27,9 +22,6 @@ EthernetServer server(ethPort);
 
 //variabelen:
 
-
-int triggerPins[3] = {2, 4, 6};
-int echoPins[3] = {3, 5, 7};
 float vardistance;
 int avg;                               //returnwaarde methode gemiddelde ultrasone
 int hoogstewaarde = 0;                 //standaardwaarde voor methode gemiddelde ultrasone
@@ -45,34 +37,21 @@ String InMessage;             //incoming message
 bool ConfigureSet = false;    //is there a configure
 byte layers = 0;              //the amount of layers, max 99     
 int width = 0;                //the width of the rack, max 999
-byte span[6];            //the length of space beteen a unit per layer, max 99
+byte span[ultrasoneSensorenCount];            //the length of space beteen a unit per layer, max 99
 Servo servo1; 
 
 void setup() {
   Serial.begin(9600); Serial.println("Domotica project: Drank rek\n");
   servo1.attach(servoPin);
-  
-  DDRB = 0x3F; //sets all of PORTB to output
 
-
-  for(int i = 0; i < 3; i++){
+  //init IO-pins:
+  DDRB = 0x3F;                                      //sets all of PORTB to output
+  for(int i = 0; i < ultrasoneSensorenCount; i++){  //init echo and trigger pins
      pinMode(triggerPins[i], OUTPUT);
      pinMode(echoPins[i], INPUT);
   }
-  
-    //init ultrasone sensor 1
-  pinMode(trigger1, OUTPUT);
-  pinMode(echo1, INPUT);
-
-    //init buzzer
-  pinMode(buzzerPin, OUTPUT);
-  
-    //init ultrasone sensor 2
-  pinMode(trigger2, OUTPUT);
-  pinMode(echo2, INPUT);
-
-  //init IO-pins:
-  pinMode(ledPin, OUTPUT);
+  pinMode(buzzerPin, OUTPUT);                       //init buzzer
+  pinMode(ledPin, OUTPUT);                          //init ledPin
   
   //default states:
   digitalWrite(ledPin, LOW);
@@ -89,9 +68,6 @@ void setup() {
 }
 
 void loop() {
-  ReadLayer(2);
-  delay(1000);
-  
   //wait for client:
   EthernetClient UserClient = server.available();
   if (!UserClient) {
@@ -110,7 +86,7 @@ void loop() {
          } else {
           InMessage += inByte;
          }         
-      } 
+      }
   }
   ConfigureSet = false;
   InMessage = "";
@@ -136,6 +112,9 @@ void Read(String InMessage, EthernetClient &UserClient) {
 bool setConfigure(String ConfigureString) {  //vb. 3120070412  -> layers(3)width(120cm)span1(7cm)span2(4cm)span3(12cm), maxlayers = 99, maxwidth = 999cm, maxspan = 99cm 
   if (ConfigureString.length() == 10){
       layers = ConfigureString.substring(0,1).toInt(); //sets layers
+      if (layers > ultrasoneSensorenCount || layers == 0) {
+        return false;
+      }
       width = ConfigureString.substring(2,4).toInt(); //sets width
       for (int i = 0; i < layers ; i++){
         span[i] = ConfigureString.substring(5 + (2 * i), 5 + (2 * i + 1)).toInt(); //sets span
@@ -159,19 +138,17 @@ String getCurrentAmount() {                  //vb. 03002004010   -> layers(3)val
 
 //return the amount of units on the layer
 String ReadLayer(int layer) {                 //vb. 002 (2), maxvalue = 999
-
-
-int counterval = width - distance(triggerPins[layer], echoPins[layer]);
-String Amount = GetAmountLayer(counterval, span[layer]);
-//make 3 char long
-if(Amount.length() < 3) {
-  Amount = "0" + Amount;
-}
-if (Amount.length() < 3) {
-  Amount = "0" + Amount;
-}
-Serial.print(Amount);
-return Amount;
+  int counterval = width - distance(triggerPins[layer], echoPins[layer]);
+  String Amount = GetAmountLayer(counterval, span[layer]);
+  //make 3 char long
+  if(Amount.length() < 3) {
+    Amount = "0" + Amount;
+  }
+  if (Amount.length() < 3) {
+    Amount = "0" + Amount;
+  }
+  Serial.println(Amount);
+  return Amount;
 }
 
 String GetAmountLayer (int counterval, int span) {
