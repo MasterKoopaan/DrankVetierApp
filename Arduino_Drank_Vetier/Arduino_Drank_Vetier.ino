@@ -92,20 +92,36 @@ void loop() {
   InMessage = "";
 }
 
+// Read the received message and respont
 void Read(String InMessage, EthernetClient &UserClient) {
+  String result = "";
   bool bigMessage = InMessage.length() > 1;
   switch (InMessage[0]) {
     case 'c':                                   //c for configure
       if(bigMessage){
         ConfigureSet = setConfigure(InMessage.substring(1));      //  vb. 03.120.07.04.12 - '.'  
-        UserClient.println(ConfigureSet);
+        char buf[2];
+        intToCharBuf(String(ConfigureSet), 1, buf);
+        UserClient.println(buf);
       }
       break;
     case 'a':                                   //a for amount
-      UserClient.println(getCurrentAmount());                    // 03.003.005.012 - '.'
-      break;
-      
+      result = getCurrentAmount(); 
+      char buf[result.length() + 1];
+      intToCharBuf(result, result.length(), buf);
+      UserClient.println(buf);                                    //  vb. 03.003.005.012 - '.'
+      break; 
   }
+}
+
+// Format the string message that will be send to the user in a char array 
+void intToCharBuf(String s, int len, char buf[])                 //s = messeage to send, len = the length of messege to send excluding the '\n', buf = referes to the char array where the messege will in be stored 
+{
+   while (s.length() < len) {              // prefix redundant "0" if not long 
+      s = "0" + s;
+   }
+   s = s + '\n';                           // add newline
+   s.toCharArray(buf, len + 1);            // convert string to char-buffer
 }
 
 //returns if the Configure is correctie set
