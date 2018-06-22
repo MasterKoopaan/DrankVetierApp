@@ -10,13 +10,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/linearLayout1">
-        <TextView
-            android:text="@string/textViewMainInfo"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/textViewMainInfo"
-            android:textAlignment="center"
+        <Button
+            android:text="@string/buttonConnect"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:id="@+id/buttonConnect" />
+        <Button
+            android:text="@string/buttonUpdate"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/buttonUpdate" />
+        <Button
+            android:text="@string/buttonExtra"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/buttonExtra" />
         <Button
             android:text="@string/buttonOptions"
             android:layout_width="50dp"
@@ -29,6 +37,27 @@
         android:minWidth="25px"
         android:minHeight="25px"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="450dp"
         android:id="@+id/listViewResults" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="100"
+        android:id="@+id/linearLayoutFooter">
+        <TextView
+            android:text="@string/textViewConnectie"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="40"
+            android:id="@+id/textViewConnectie" />
+        <TextView
+            android:text="@string/textViewUpdated"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="60"
+            android:id="@+id/textViewUpdated" />
+    </LinearLayout>
 </LinearLayout>

@@ -12,12 +12,11 @@ using Android.Widget;
 
 namespace DrankVetierApp
 {
-    //03.120.07.04.12 
     public class RackConfig
     {
         private int Width;      //max = 999
         private int LayersCount;     //max = 99
-        private List<Layer> Layers; 
+        public List<Layer> Layers; 
 
         public RackConfig(int Width, int LayersCount, string LayerInfo)
         {
@@ -49,12 +48,21 @@ namespace DrankVetierApp
             this.LayersCount = LayersCount;
         }
 
-        public string getConfig()
+        public string getConfig()   //Output example: 03120070412 
         {
             string config = Convert.ToString(LayersCount);
             if (config.Length < 2) config = "0" + config;
             string value = Convert.ToString(Width);
-            if (value.Length < 2) config = "0" + value;
+            if (value.Length < 2) config += "0" + value;
+            foreach(Layer layer in Layers)
+            {
+                string span = Convert.ToString(layer.GetSpan());
+                if (span.Length < 2)
+                {
+                    span = "0" + span;
+                }
+                config += span;
+            }
             return config;
         }
 

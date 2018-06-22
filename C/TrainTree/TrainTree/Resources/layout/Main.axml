@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="100"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:id="@+id/linearLayout1">
+        <TextView
+            android:text="Ip:"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:paddingTop="10dp"
+            android:layout_weight="8"
+            android:id="@+id/textViewIp" />
+        <EditText
+            android:inputType="numberDecimal"
+            android:digits="0123456789."
+            android:text="@string/editTextIp"
+            android:id="@+id/editTextIPAddress"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="10dp"
+            android:layout_weight="52" />
+        <TextView
+            android:text="Poort:"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:paddingTop="10dp"
+            android:layout_weight="16"
+            android:id="@+id/textViewPoort" />
+        <EditText
+            android:inputType="numberDecimal"
+            android:digits="0123456789."
+            android:text="@string/editTextPoort"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/editTextIPPort"
+            android:layout_weight="24"
+            android:maxLength="4" />
+    </LinearLayout>
+    <Button
+        android:text="Connect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonConnect" />
+    <TextView
+        android:text="@string/textViewServerConnect"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:id="@+id/textViewServerConnect" />
+    <TextView
+        android:text="@string/textViewDistance"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:id="@+id/textViewDistance" />
+    <TextView
+        android:text="@string/textViewSensor"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:id="@+id/textViewSensor" />
+    <TextView
+        android:text="@string/textViewGate"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:id="@+id/textViewGate" />
+    <TextView
+        android:text="@string/textViewServo"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:id="@+id/textViewServo" />
+    <Button
+        android:text="Toggle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/buttonToggle"
+        android:textSize="50dp" />
+</LinearLayout>
