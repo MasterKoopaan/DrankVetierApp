@@ -40,7 +40,7 @@ namespace DrankVetierApp
             buttonMin = FindViewById<Button>(Resource.Id.buttonMin);
             listViewConfigure = FindViewById<ListView>(Resource.Id.listViewConfigure);
 
-            config = GetConfig();
+            config = DataHandler.GetConfig();
             if (config == null)
             {
                 config = new RackConfig(0, 1, "7:Empty"); //|6:Bier|3:S
@@ -95,7 +95,6 @@ namespace DrankVetierApp
                
             };
 
-            
             //save the new config if correct and complete
             buttonSave.Click += (slender, e) =>
             {
@@ -103,8 +102,9 @@ namespace DrankVetierApp
                 //else show a toast with fail message
                 if (CheckNewConfig())
                 {
-                    //overwrite the config
-                    SaveConfig();
+                    //overwrite the config and empty the currently saved data 
+                    DataHandler.SaveConfig(config);
+                    DataHandler.ResetData();
 
                     //go back to main activity
                     Intent newActivityMain = new Intent(this, typeof(MainActivity));
@@ -144,32 +144,6 @@ namespace DrankVetierApp
                 }
             }
             return true;
-        }
-
-        public void SaveConfig()
-        {
-            var MyRackConfig = Application.Context.GetSharedPreferences("MyRackConfig", FileCreationMode.Private);
-            var MyRackConfigEdit = MyRackConfig.Edit();
-            MyRackConfigEdit.PutString("Width", Convert.ToString(config.GetWidth()));
-            MyRackConfigEdit.PutString("LayersCount", Convert.ToString(config.GetLayersCount()));
-            MyRackConfigEdit.PutString("LayersInfo", config.GetLayersInfo());
-        }
-
-        public RackConfig GetConfig()
-        {
-            var MyRackConfig = Application.Context.GetSharedPreferences("MyRackConfig", FileCreationMode.Private);
-            int width = Convert.ToInt32(MyRackConfig.GetString("Width", "0"));
-            int layersCount = Convert.ToInt32(MyRackConfig.GetString("LayersCount", "0"));
-            string layersInfo = MyRackConfig.GetString("LayersInfo", "0");
-            if (width != 0 && layersCount != 0 && layersInfo != "0")
-            {
-                return new RackConfig(width, layersCount, layersInfo);
-            }
-            else
-            {
-                return null;
-            }
-
         }
 
         public void UpdateTextViewLayersCount(int value)
