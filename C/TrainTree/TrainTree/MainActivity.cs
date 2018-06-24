@@ -28,7 +28,7 @@ namespace TrainTree
         public TextView textViewSensor, textViewServo;
         EditText editTextIPAddress, editTextIPPort;
         byte command = 0;                            // regulates which command is send by timer
-        Timer timerSockets;                         // Timers   
+        Timer timerSockets, timerConnect;                         // Timers   
         Socket socket = null;                       // Socket   
         List<Tuple<string, TextView>> commandList = new List<Tuple<string, TextView>>();  // List for commands and response places on UI
 
@@ -75,18 +75,28 @@ namespace TrainTree
                 else timerSockets.Enabled = false;  // If socket broken -> disable timer
                 //});
             };
-            
+            timerConnect = new Timer() { Interval = 3000, Enabled = false };
+            timerConnect.Elapsed += (obj, args) =>
+            {
+                timerConnect.Enabled = false;
+            };
+
             //Add the "Connect" button handler.
             if (buttonConnect != null)  // if button exists
             {
                 buttonConnect.Click += (sender, e) =>
                 {
-                    //Validate the user input (IP address and port)
-                    if (CheckValidIpAddress(editTextIPAddress.Text) && CheckValidPort(editTextIPPort.Text))
+                    timerConnect.Enabled = true;
+                    while (timerConnect.Enabled)
                     {
-                        ConnectSocket(editTextIPAddress.Text, editTextIPPort.Text);
+                        //Validate the user input (IP address and port)
+                        if (CheckValidIpAddress(editTextIPAddress.Text) && CheckValidPort(editTextIPPort.Text))
+                        {
+                            ConnectSocket(editTextIPAddress.Text, editTextIPPort.Text);
+                        }
+                        else UpdateConnectionState(3, "Please check IP");
                     }
-                    else UpdateConnectionState(3, "Please check IP");
+                    
                 };
             }
 
@@ -182,10 +192,24 @@ namespace TrainTree
         {
             RunOnUiThread(() =>
             {
-                if (result == "OFF") textview.SetTextColor(Color.Red);
-                else if (result == " ON") textview.SetTextColor(Color.Green);
-                else textview.SetTextColor(Color.White);
-                textview.Text = result;
+                textview.SetTextColor(Color.White);
+                if (textview == textViewServo)
+                {
+                    try
+                    {
+                        if ((Convert.ToInt32(result)) > 0) textview.Text = "open";
+                        else textview.Text = "dicht";
+                    }
+                    catch
+                    {
+                        textview.Text = "unknown";
+                    }
+                }
+                else
+                {
+                    textview.Text = result;
+                }
+
             });
 
         }

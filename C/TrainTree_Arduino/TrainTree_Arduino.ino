@@ -30,18 +30,10 @@
 // 2 Addr 21177114 unit 1 on/off, period: 270us
 // 3 Addr 21177114 unit 2 on/off, period: 270us
 
-// Supported KaKu devices -> find, download en install corresponding libraries
-#define unitCodeApa3      24895810  // replace with your own code
-#define unitCodeActionOld 31        // replace with your own code
-#define unitCodeActionNew 2210406   // replace with your own code
-
 // Include files.
 #include <Servo.h>
 #include <SPI.h>                  // Ethernet shield uses SPI-interface
 #include <Ethernet.h>             // Ethernet library (use Ethernet2.h for new ethernet shield v2)
-//#include <NewRemoteTransmitter.h> // Remote Control, Gamma, APA3
-//#include <RemoteTransmitter.h>    // Remote Control, Action, old model
-//#include <RCSwitch.h>           // Remote Control, Action, new model
 
 // Set Ethernet Shield MAC address  (check yours)
 byte mac[] = { 0x40, 0x6c, 0x8f, 0x36, 0x84, 0x8a }; // Ethernet adapter shield S. Oosterhaven
@@ -60,7 +52,11 @@ bool toggled = false;
 float threshold;
 int result;
 int minD, maxD;
-byte counter;
+byte counter, counter2;
+unsigned long previousmillis = 0;
+const long interval = 10000;
+
+
 Servo servo1;
 
 void setup()
@@ -129,7 +125,7 @@ void loop()
 {
   if (!toggled)
   {
-    result = Distance(trigPin, echoPin);
+    result = DistanceAv(trigPin, echoPin);
     //Serial.print("Distance: ");
     //Serial.print(round(result));
     //Serial.println("cm.");
@@ -156,7 +152,7 @@ void loop()
   while (ethernetClient.connected())
   {
     if (!toggled) {
-      result = Distance(trigPin, echoPin);
+      result = DistanceAv(trigPin, echoPin);
       //Serial.print("Distance: ");
       //Serial.print(round(result));
       //Serial.println("cm.");
@@ -189,6 +185,11 @@ void executeCommand(char cmd)
   Serial.print("["); Serial.print(cmd); Serial.print("] -> ");
   switch (cmd) {
     case 't': // toggle gate position
+      //unsigned long currentMillis = millis();
+
+      //if (currentMillis - previousMillis >= interval) {
+      // save the last time you blinked the LED
+      //previousMillis = currentMillis;
       servo1.write(0);
       delay(10000);
       servo1.write(179);
@@ -269,7 +270,7 @@ void intToCharBuf(int val, char buf[], int len)
 }
 
 
-float Distance(int trigger, int echoer) {
+int Distance(int trigger, int echoer) {
   digitalWrite(trigger, HIGH);
   delayMicroseconds(10);
   digitalWrite(trigger, LOW);
@@ -281,6 +282,31 @@ float Distance(int trigger, int echoer) {
     return -1;
   }
 }
+
+int DistanceAv(int trigger, int echoer){
+  int i = 0, minimum = 999999, maximum = -999999, afstand, totaal;
+  int j;
+  while(i < 6){
+     afstand = Distance(trigger, echoer);
+     if(afstand != -1){
+           minimum = min(minimum , afstand);
+           maximum = max(maximum , afstand);
+           totaal += afstand;
+           i++;
+           j = 0;
+     }
+     else if(j < 3)
+     {
+      j++;
+     }
+     else
+     {
+      return -1;
+     }
+  }
+  return (int) totaal / 4.0;
+}
+
 
 void Run(int distance, int MinAcceptance, int MaxAcceptance) {
   //Serial.print(MinAcceptance);
@@ -302,9 +328,15 @@ void Run(int distance, int MinAcceptance, int MaxAcceptance) {
     }
   }
   else {
-    servo1.write(179);
-    Serial.println("open");
-    counter = 0;
+    if (counter2 == 4) {
+      servo1.write(179);
+      Serial.println("open");
+      counter2 = 0;
+    }
+    else{
+      Serial.println(counter2);
+      counter2++;
+    }
   }
 }
 
