@@ -40,7 +40,7 @@ namespace DrankVetierApp
             buttonMin = FindViewById<Button>(Resource.Id.buttonMin);
             listViewConfigure = FindViewById<ListView>(Resource.Id.listViewConfigure);
 
-            config = GetConfig();
+            config = DataHandler.GetConfig();
             if (config == null)
             {
                 config = new RackConfig(0, 1, "7:Empty"); //|6:Bier|3:S
@@ -75,8 +75,7 @@ namespace DrankVetierApp
                     UpdateTextViewLayersCount(LayersCount);
                     config.Layers.Add(new Layer(0, "Empty"));
                     //update list view
-                    adapter = new ListViewConfigure_Adapter(this, config.Layers);
-                    listViewConfigure.Adapter = adapter;
+                    UpdateListViewConfig();
                 }
             };
             buttonMin.Click += (slender, e) =>
@@ -89,13 +88,11 @@ namespace DrankVetierApp
                     UpdateTextViewLayersCount(LayersCount);
                     config.Layers.RemoveAt(LayersCount);
                     //update list view
-                    adapter = new ListViewConfigure_Adapter(this, config.Layers);
-                    listViewConfigure.Adapter = adapter;
+                    UpdateListViewConfig();
                 }
                
             };
 
-            
             //save the new config if correct and complete
             buttonSave.Click += (slender, e) =>
             {
@@ -103,8 +100,9 @@ namespace DrankVetierApp
                 //else show a toast with fail message
                 if (CheckNewConfig())
                 {
-                    //overwrite the config
-                    SaveConfig();
+                    //overwrite the config and empty the currently saved data 
+                    DataHandler.SaveConfig(config);
+                    DataHandler.ResetData();
 
                     //go back to main activity
                     Intent newActivityMain = new Intent(this, typeof(MainActivity));
@@ -119,15 +117,19 @@ namespace DrankVetierApp
             };
         }
 
-        
-
-        //going back to the main activity
+        /// <summary>
+        /// Going back to the main activity
+        /// </summary>
         public void GoBackToMain()
         {
             Intent newActivityMain = new Intent(this, typeof(MainActivity));
             StartActivity(newActivityMain);
         }
 
+        /// <summary>
+        /// Check of the current the config correct and complete is
+        /// </summary>
+        /// <returns></returns>
         public bool CheckNewConfig()
         {
             if (config.GetWidth() <= 0 || config.GetWidth() > 99)
@@ -146,35 +148,22 @@ namespace DrankVetierApp
             return true;
         }
 
-        public void SaveConfig()
-        {
-            var MyRackConfig = Application.Context.GetSharedPreferences("MyRackConfig", FileCreationMode.Private);
-            var MyRackConfigEdit = MyRackConfig.Edit();
-            MyRackConfigEdit.PutString("Width", Convert.ToString(config.GetWidth()));
-            MyRackConfigEdit.PutString("LayersCount", Convert.ToString(config.GetLayersCount()));
-            MyRackConfigEdit.PutString("LayersInfo", config.GetLayersInfo());
-        }
-
-        public RackConfig GetConfig()
-        {
-            var MyRackConfig = Application.Context.GetSharedPreferences("MyRackConfig", FileCreationMode.Private);
-            int width = Convert.ToInt32(MyRackConfig.GetString("Width", "0"));
-            int layersCount = Convert.ToInt32(MyRackConfig.GetString("LayersCount", "0"));
-            string layersInfo = MyRackConfig.GetString("LayersInfo", "0");
-            if (width != 0 && layersCount != 0 && layersInfo != "0")
-            {
-                return new RackConfig(width, layersCount, layersInfo);
-            }
-            else
-            {
-                return null;
-            }
-
-        }
-
+        /// <summary>
+        /// Update the layercount textview
+        /// </summary>
+        /// <param name="value"></param>
         public void UpdateTextViewLayersCount(int value)
         {
             textViewLayersValue.Text = Convert.ToString(value);
+        }
+
+        /// <summary>
+        /// Update the config listview
+        /// </summary>
+        public void UpdateListViewConfig()
+        {
+            adapter = new ListViewConfigure_Adapter(this, config.Layers);
+            listViewConfigure.Adapter = adapter;
         }
     }
 }

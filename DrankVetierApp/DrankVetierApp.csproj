@@ -54,6 +54,7 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataHandler.cs" />
     <Compile Include="ListViewConfigure_Adapter.cs" />
     <Compile Include="ListViewResults_Adapter.cs" />
     <Compile Include="MainActivity.cs" />

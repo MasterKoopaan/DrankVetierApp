@@ -7,14 +7,14 @@ using System;
 using Android.Content;
 using System.Timers;
 using Android.Content.Res;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace DrankVetierApp
 {
     [Activity(Label = "DrankVertierApp", MainLauncher = true)]
     public class MainActivity : Activity
     {
-        //https://www.youtube.com/watch?v=rYxWSV-x65I https://www.youtube.com/watch?v=s6mPvaxvLXQ https://docs.microsoft.com/en-us/xamarin/xamarin-forms/app-fundamentals/files?tabs=vswin https://www.youtube.com/watch?v=sk9fRXu53Qs
-
         // Initialize Object
         public RackConfig rackConfig;
         public RackData rackData;
@@ -37,26 +37,32 @@ namespace DrankVetierApp
             buttonUpdate = FindViewById<Button>(Resource.Id.buttonUpdate);
             buttonExtra = FindViewById<Button>(Resource.Id.buttonExtra);
             buttonOptions = FindViewById<Button>(Resource.Id.buttonOptions);
-            //buttonOptions.SetBackgroundColor(Android.Graphics.Color.Red);
-            //buttonOptions.BackgroundTintMode = ColorStateList.ValueOf(Color.HoloRedLight); 
+                //buttonOptions.SetBackgroundColor(Android.Graphics.Color.Red);
+                //buttonOptions.BackgroundTintMode = ColorStateList.ValueOf(Color.HoloRedLight); 
             listViewResults = FindViewById<ListView>(Resource.Id.listViewResults);
             textViewConnectie = FindViewById<TextView>(Resource.Id.textViewConnectie);
             textViewUpdated = FindViewById<TextView>(Resource.Id.textViewUpdated);
 
             // Get config en data
-            rackConfig = GetConfig();
-            rackData = GetData();
+            rackConfig = DataHandler.GetConfig();
+            rackData = DataHandler.GetData();
 
-            // Update ListViewResults
+            // Update ListViewResults and Buttons Enabled default state
             if (rackConfig == null)
             {
                 ArrayAdapter noConfigAdapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, new string[] { "There is no Config, Go to Options." });
                 listViewResults.Adapter = noConfigAdapter;
+                buttonConnect.Enabled = false;
             } else 
             {
                 ListViewResults_Adapter ConfigAdapter = new ListViewResults_Adapter(this, new Rack(rackConfig.Layers, rackData.amounts));
                 listViewResults.Adapter = ConfigAdapter;
             }
+            buttonUpdate.Enabled = false;
+            textViewConnectie.SetTextColor(Android.Graphics.Color.Red);
+
+        //! NOT IMPLEMENTED !
+        buttonExtra.Enabled = false;
 
             // Go to options to set config
             buttonOptions.Click += (slender, e) =>
@@ -77,23 +83,36 @@ namespace DrankVetierApp
                 else timerSockets.Enabled = false;  // If socket broken -> disable timer
                 //});
             };
+
+            //If connected ask the amount on the layers
+            buttonUpdate.Click += (sender, e) =>
+            {
+                string result = executeGetData();                 // Send toggle-command to the Arduino
+                if (result != "err")
+                {
+                    rackData = DataHandler.SetData(result, rackConfig.GetLayersCount());
+                    DataHandler.SaveData(rackData);
+                    ListViewResults_Adapter ConfigAdapter = new ListViewResults_Adapter(this, new Rack(rackConfig.Layers, rackData.amounts));
+                    listViewResults.Adapter = ConfigAdapter;
+                    //textViewUpdated = ;
+                } else
+                {
+                    Toast.MakeText(this, "Updating failed", ToastLength.Long).Show();
+                }
+            };
+
+            //If the connection data (Ip and Port) that are given are valid, then we will try to connect
+            buttonConnect.Click += (sender, e) =>
+            {
+                //Validate the user input (IP address and port)
+                if (CheckValidIpAddress("Ip") && CheckValidPort("Port"))
+                {
+                    ConnectSocket("Ip", "Port");
+                }
+                else UpdateConnectionState(3);
+            };
         }
 
-        public void UpdateConnectionState(int state)
-        {
-            switch (state)
-            {
-                case 1:     //connecting
-                    //buttonOptions.SetBackgroundColor(Android.Graphics.Color.Orange); 
-                    break;
-                case 2:     //connected
-                    //buttonOptions.SetBackgroundColor(Android.Graphics.Color.Green);
-                    break;
-                case 4:     //not connected
-                    //buttonOptions.SetBackgroundColor(Android.Graphics.Color.Red);
-                    break;
-            }
-        }
         // Connect to socket ip/prt (simple sockets)
         public void ConnectSocket(string ip, string prt)
         {
@@ -108,7 +127,9 @@ namespace DrankVetierApp
                         socket.Connect(new IPEndPoint(IPAddress.Parse(ip), Convert.ToInt32(prt)));
                         if (socket.Connected)
                         {
+                            socket.Send(Encoding.ASCII.GetBytes('c' + rackConfig.getConfig() + '\n'));
                             UpdateConnectionState(2);
+                            textViewConnectie.Text = "Disconnect";
                             timerSockets.Enabled = true;                //Activate timer for communication with Arduino     
                         }
                     }
@@ -128,50 +149,102 @@ namespace DrankVetierApp
                     socket.Close(); socket = null;
                     timerSockets.Enabled = false;
                     UpdateConnectionState(4);
+                    textViewConnectie.Text = "Connect";
                 }
             });
         }
-
-        public RackConfig GetConfig()
+        public void UpdateConnectionState(int state)
         {
-            var MyRackConfig = Application.Context.GetSharedPreferences("MyRackConfig", FileCreationMode.Private);
-            int width = Convert.ToInt32(MyRackConfig.GetString("Width", "0"));
-            int layersCount = Convert.ToInt32(MyRackConfig.GetString("LayersCount", "0"));
-            string layersInfo = MyRackConfig.GetString("LayersInfo", "0");
-            if (width != 0 && layersCount != 0 && layersInfo != "0")
+            switch (state)
             {
-                return new RackConfig(width, layersCount, layersInfo);
-            }
-            else
-            {
-                return null;
+                case 1:     //connecting
+                    textViewConnectie.Text = "Connecting. . .";
+                    textViewConnectie.SetTextColor(Android.Graphics.Color.Green);
+                    break;
+                case 2:     //connected
+                    textViewConnectie.Text = "Connected";
+                    textViewConnectie.SetTextColor(Android.Graphics.Color.Blue);
+                    break;
+                case 3:     //invalid ip or/and poort
+                    textViewConnectie.Text = "Invalid Connection data";
+                    textViewConnectie.SetTextColor(Android.Graphics.Color.Orange);
+                    break;
+                case 4:     //not connected
+                    textViewConnectie.Text = "Not Connected";
+                    textViewConnectie.SetTextColor(Android.Graphics.Color.Red);
+                    break;
             }
         }
 
-        //!Maak een static class!
-        public RackData SetData(string data) //Incoming data sturcture: 03 002004010 - layers, amount layersX
+        public string executeGetData()
         {
-            int layerscount = Convert.ToInt32(data.Substring(0, 2));
-            if (rackConfig.GetLayersCount() != layerscount)
+            byte[] buffer = new byte[495]; // response is max 496 characters long
+            int bytesRead = 0;
+            string result = "";
+
+            if (socket != null)
             {
-                return null;
+                //Send command to server
+                socket.Send(Encoding.ASCII.GetBytes("a" + '\n'));
+
+                try //Get response from server
+                {
+                    //Store received bytes (always 4 bytes, ends with \n)
+                    bytesRead = socket.Receive(buffer);  // If no data is available for reading, the Receive method will block until data is available,
+                    //Read available bytes.              // socket.Available gets the amount of data that has been received from the network and is available to be read
+                    while (socket.Available > 0)
+                    {
+                        bytesRead = socket.Receive(buffer);
+                    }
+                    if (bytesRead >= 5)
+                        result = Encoding.ASCII.GetString(buffer, 0, bytesRead - 1); // skip \n
+                    else result = "err";
+                }
+                catch (Exception exception)
+                {
+                    result = exception.ToString();
+                    if (socket != null)
+                    {
+                        socket.Close();
+                        socket = null;
+                    }
+                    UpdateConnectionState(3);
+                }
             }
-            int[] amount = new int[layerscount];
-            for (int i = 2; i < layerscount; i += 3)
-            {
-                amount[i] = Convert.ToInt32(data.Substring(i, 3));
-            }
-            return new RackData(amount, DateTime.Now);
+            return result;
         }
 
-        public void SaveData()
+        //Check if the entered IP address is valid.
+        private bool CheckValidIpAddress(string ip)
         {
-
+            if (ip != "")
+            {
+                //Check user input against regex (check if IP address is not empty).
+                Regex regex = new Regex("\\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\.|$)){4}\\b");
+                Match match = regex.Match(ip);
+                return match.Success;
+            }
+            else return false;
         }
 
-        public RackData GetData()
+        //Check if the entered port is valid.
+        private bool CheckValidPort(string port)
         {
-            return null;
+            //Check if a value is entered.
+            if (port != "")
+            {
+                Regex regex = new Regex("[0-9]+");
+                Match match = regex.Match(port);
+
+                if (match.Success)
+                {
+                    int portAsInteger = Int32.Parse(port);
+                    //Check if port is in range.
+                    return ((portAsInteger >= 0) && (portAsInteger <= 65535));
+                }
+                else return false;
+            }
+            else return false;
         }
     }
 }

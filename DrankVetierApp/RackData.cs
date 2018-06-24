@@ -22,6 +22,11 @@ namespace DrankVetierApp
             this.amounts = amounts;
             updated = now;
         }
+
+        public string GetAmountsString()
+        {
+            return string.Join("|", amounts);
+        }
     }
 
     public class Rack
