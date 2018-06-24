@@ -12,11 +12,17 @@ using Android.Widget;
 
 namespace DrankVetierApp
 {
+    /// <summary>
+    /// Data Handler for handeling RackConfig en RackData data
+    /// </summary>
     public static class DataHandler
     {
         // RackConfig handler
 
-        //Save RackConfig in Application SharedPreferences
+        /// <summary>
+        /// Save RackConfig in Application SharedPreferences
+        /// </summary>
+        /// <param name="config"></param>
         public static void SaveConfig(RackConfig config)
         {
             var MyRackConfig = Application.Context.GetSharedPreferences("MyRackConfig", FileCreationMode.Private);
@@ -26,7 +32,10 @@ namespace DrankVetierApp
             MyRackConfigEdit.PutString("LayersInfo", config.GetLayersInfo());
         }
 
-        //Get local savad RackConfig in Application SharedPreferences
+        /// <summary>
+        /// returns the local saved RackConfig in Application SharedPreferences
+        /// </summary>
+        /// <returns></returns>
         public static RackConfig GetConfig()
         {
             var MyRackConfig = Application.Context.GetSharedPreferences("MyRackConfig", FileCreationMode.Private);
@@ -45,7 +54,12 @@ namespace DrankVetierApp
 
         // RackData handlers
 
-        //Set a RackData with incoming data
+        /// <summary>
+        /// Returns the new RackData with incoming data
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="currentlayercount"></param>
+        /// <returns></returns>
         public static RackData SetData(string data, int currentlayercount) //Incoming data sturcture: 03 002004010 - layers, amount layersX
         {
             int layerscount = Convert.ToInt32(data.Substring(0, 2));
@@ -61,7 +75,10 @@ namespace DrankVetierApp
             return new RackData(amount, DateTime.Now);
         }
 
-        //Save RackData in Application SharedPreferences
+        /// <summary>
+        /// Save RackData in Application SharedPreferences
+        /// </summary>
+        /// <param name="data"></param>
         public static void SaveData(RackData data)
         {
             var MyRackData = Application.Context.GetSharedPreferences("MyRackData", FileCreationMode.Private);
@@ -70,7 +87,10 @@ namespace DrankVetierApp
             //MyRackDataEdit.PutString("Updated", data.updated);
         }
 
-        //Get local savad RackData in Application SharedPreferences
+        /// <summary>
+        /// Returns the local savad RackData in Application SharedPreferences
+        /// </summary>
+        /// <returns></returns>
         public static RackData GetData()
         {
             var MyRackData = Application.Context.GetSharedPreferences("MyRackData", FileCreationMode.Private);
@@ -86,7 +106,9 @@ namespace DrankVetierApp
             }     
         }
 
-        //Delete currently saved RackData in Application SharedPreferences Because Config chance
+        /// <summary>
+        /// Delete currently saved RackData in Application SharedPreferences because a chance of the current Config 
+        /// </summary>
         public static void ResetData()
         {
             var MyRackData = Application.Context.GetSharedPreferences("MyRackData", FileCreationMode.Private);

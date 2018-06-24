@@ -53,8 +53,9 @@ namespace DrankVetierApp
             if (holder == null)
             {
                 holder = new ListViewConfigure_AdapterViewHolder();
-                var inflater = context.GetSystemService(Context.LayoutInflaterService).JavaCast<LayoutInflater>();
-                view = inflater.Inflate(Resource.Layout.Options_Item, parent, false);
+                //var inflater = context.GetSystemService(Context.LayoutInflaterService).JavaCast<LayoutInflater>();
+                //view = inflater.Inflate(Resource.Layout.Options_Item, parent, false);
+                view = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.Options_Item, parent, false);
                 holder.Layer = view.FindViewById<TextView>(Resource.Id.textViewLayer);
                 holder.Span = view.FindViewById<EditText>(Resource.Id.editTextSpan);
                 holder.Name = view.FindViewById<EditText>(Resource.Id.editTextName);

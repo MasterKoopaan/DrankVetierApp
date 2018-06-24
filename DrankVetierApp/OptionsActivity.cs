@@ -75,8 +75,7 @@ namespace DrankVetierApp
                     UpdateTextViewLayersCount(LayersCount);
                     config.Layers.Add(new Layer(0, "Empty"));
                     //update list view
-                    adapter = new ListViewConfigure_Adapter(this, config.Layers);
-                    listViewConfigure.Adapter = adapter;
+                    UpdateListViewConfig();
                 }
             };
             buttonMin.Click += (slender, e) =>
@@ -89,8 +88,7 @@ namespace DrankVetierApp
                     UpdateTextViewLayersCount(LayersCount);
                     config.Layers.RemoveAt(LayersCount);
                     //update list view
-                    adapter = new ListViewConfigure_Adapter(this, config.Layers);
-                    listViewConfigure.Adapter = adapter;
+                    UpdateListViewConfig();
                 }
                
             };
@@ -119,15 +117,19 @@ namespace DrankVetierApp
             };
         }
 
-        
-
-        //going back to the main activity
+        /// <summary>
+        /// Going back to the main activity
+        /// </summary>
         public void GoBackToMain()
         {
             Intent newActivityMain = new Intent(this, typeof(MainActivity));
             StartActivity(newActivityMain);
         }
 
+        /// <summary>
+        /// Check of the current the config correct and complete is
+        /// </summary>
+        /// <returns></returns>
         public bool CheckNewConfig()
         {
             if (config.GetWidth() <= 0 || config.GetWidth() > 99)
@@ -146,9 +148,22 @@ namespace DrankVetierApp
             return true;
         }
 
+        /// <summary>
+        /// Update the layercount textview
+        /// </summary>
+        /// <param name="value"></param>
         public void UpdateTextViewLayersCount(int value)
         {
             textViewLayersValue.Text = Convert.ToString(value);
+        }
+
+        /// <summary>
+        /// Update the config listview
+        /// </summary>
+        public void UpdateListViewConfig()
+        {
+            adapter = new ListViewConfigure_Adapter(this, config.Layers);
+            listViewConfigure.Adapter = adapter;
         }
     }
 }

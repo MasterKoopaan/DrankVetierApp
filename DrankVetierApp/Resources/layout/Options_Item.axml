@@ -32,7 +32,6 @@
             android:maxLength="2"
             android:textAlignment="center" />
         <EditText
-            android:inputType="text"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="65"
