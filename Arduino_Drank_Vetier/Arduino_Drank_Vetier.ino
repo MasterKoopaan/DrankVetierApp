@@ -57,11 +57,11 @@ void setup() {
   digitalWrite(ledPin, LOW);
 
   //get IP adress:
-//  if (Ethernet.begin(mac) == 0) {
-//    //Get IP failed
-//    Serial.println("No DHCP. Get IP failed");
-   Ethernet.begin(mac, ip);
-//  }
+  if (Ethernet.begin(mac) == 0) {
+    //Get IP failed
+    Serial.println("No DHCP. Get IP failed");
+    Ethernet.begin(mac, ip);
+  }
   server.begin();
   Serial.print("Listening address server: "); Serial.print(Ethernet.localIP());
   Serial.print(" on port "); Serial.print(ethPort);
@@ -99,9 +99,10 @@ void Read(String InMessage, EthernetClient &UserClient) {
   switch (InMessage[0]) {
     case 'c':                                   //c for configure
       if(bigMessage){
-        ConfigureSet = setConfigure(InMessage.substring(1));      //  vb. 03.120.07.04.12 - '.'  
-        char buf[2];
-        intToCharBuf(String(ConfigureSet), 1, buf);
+        result = setConfigure(InMessage.substring(1));      //  vb. 03.120.07.04.12 - '.'  
+        Serial.println(result);
+        char buf[4];
+        intToCharBuf(result, 3, buf);
         UserClient.println(buf);
       }
       break;
@@ -125,20 +126,26 @@ void intToCharBuf(String s, int len, char buf[])                 //s = messeage 
 }
 
 //returns if the Configure is correctie set
-bool setConfigure(String ConfigureString) {  //vb. 3120070412  -> layers(3)width(120cm)span1(7cm)span2(4cm)span3(12cm), maxlayers = 99, maxwidth = 999cm, maxspan = 99cm 
-  if (ConfigureString.length() == 10){
-      layers = ConfigureString.substring(0,1).toInt(); //sets layers
+String setConfigure(String ConfigureString) {  //vb. 03120070412  -> layers(3)width(120cm)span1(7cm)span2(4cm)span3(12cm), maxlayers = 99, maxwidth = 999cm, maxspan = 99cm 
+  Serial.println(ConfigureString);
+  if (ConfigureString.length() >= 7){
+      layers = ConfigureString.substring(0,2).toInt(); //sets layers
+      Serial.println(layers);
       if (layers > ultrasoneSensorenCount || layers == 0) {
-        return false;
+        return "out";
       }
-      width = ConfigureString.substring(2,4).toInt(); //sets width
+      width = ConfigureString.substring(1,4).toInt(); //sets width
+      Serial.println(width);
       for (int i = 0; i < layers ; i++){
-        span[i] = ConfigureString.substring(5 + (2 * i), 5 + (2 * i + 1)).toInt(); //sets span
+        span[i] = ConfigureString.substring(5 + (2 * i), 7 + (2 * i)).toInt(); //sets span
+        Serial.println(span[i]);
       }
-      return true;
+      ConfigureSet = true;
+      return "suc";
   }
   else{
-    return false;
+    Serial.println(ConfigureString);
+    return "err";
   }
 }
 
@@ -149,6 +156,7 @@ String getCurrentAmount() {                  //vb. 03002004010   -> layers(3)val
   for (int layer = 0; layer < layers; layer++) {
     CurrentAmount += ReadLayer(layer);
   }
+  Serial.println(CurrentAmount);
   return CurrentAmount;
 }
 

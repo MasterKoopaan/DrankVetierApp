@@ -53,7 +53,8 @@ namespace DrankVetierApp
             string config = Convert.ToString(LayersCount);
             if (config.Length < 2) config = "0" + config;
             string value = Convert.ToString(Width);
-            if (value.Length < 2) config += "0" + value;
+            while (value.Length < 3) value += "0" + value;
+            config += value;
             foreach(Layer layer in Layers)
             {
                 string span = Convert.ToString(layer.GetSpan());

@@ -68,9 +68,9 @@ namespace DrankVetierApp
                 return null;
             }
             int[] amount = new int[layerscount];
-            for (int i = 2; i < layerscount; i += 3)
+            for (int i = 0; i < layerscount; i ++)
             {
-                amount[i] = Convert.ToInt32(data.Substring(i, 3));
+                amount[i] = Convert.ToInt32(data.Substring(2 + i * 3, 3));
             }
             return new RackData(amount, DateTime.Now);
         }
