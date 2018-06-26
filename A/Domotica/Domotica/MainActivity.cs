@@ -55,12 +55,15 @@ namespace Domotica
         Button buttonChangePinState;
         TextView textViewServerConnect, textViewTimerStateValue, textViewSeekBar, textViewKaku1, textViewKaku2, textViewKaku3;
         public TextView textViewChangePinStateValue, textViewSensorValue, textViewSensorValue2, textViewDebugValue;
-        EditText editTextIPAddress, editTextIPPort;
+        EditText editTextIPAddress, editTextIPPort, editText_userinput, editText_usertijd;
         SeekBar seekBar;
 
         Timer timerClock, timerSockets;             // Timers   
         Socket socket = null;                       // Socket   
         List<Tuple<string, TextView>> commandList = new List<Tuple<string, TextView>>();  // List for commands and response places on UI
+
+        int randvoorwaarde = 200;
+        
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -80,6 +83,8 @@ namespace Domotica
             textViewDebugValue = FindViewById<TextView>(Resource.Id.textViewDebugValue);
             editTextIPAddress = FindViewById<EditText>(Resource.Id.editTextIPAddress);
             editTextIPPort = FindViewById<EditText>(Resource.Id.editTextIPPort);
+            editText_userinput = FindViewById<EditText>(Resource.Id.editText_userinput);
+            editText_usertijd = FindViewById<EditText>(Resource.Id.editText_usertijd);
 
             seekBar = FindViewById<SeekBar>(Resource.Id.seekBar1);
             textViewSeekBar = FindViewById<TextView>(Resource.Id.textViewSeekBar1);
@@ -99,15 +104,18 @@ namespace Domotica
                 timerSockets.Interval = 10000 / (1 + seekBar.Progress);
                 timerSockets.Enabled = true;
             };
-            
 
+            editText_userinput.TextChanged += (slender, e) =>
+            {
+                randvoorwaarde = Convert.ToInt32(editText_userinput.Text);
+            };
 
             UpdateConnectionState(4, "Disconnected"); // 4 = een out of bound value, dus de default == disconnect
 
             // Init commandlist, scheduled by socket timer
             commandList.Add(new Tuple<string, TextView>("s", textViewChangePinStateValue));
             commandList.Add(new Tuple<string, TextView>("a", textViewSensorValue));         //sensor 1
-            commandList.Add(new Tuple<string, TextView>("b", textViewSensorValue2));         //sencor 2
+            commandList.Add(new Tuple<string, TextView>("b", textViewSensorValue2));         //sensor 2
 
             this.Title = this.Title + " (timer sockets)";
 
@@ -131,12 +139,22 @@ namespace Domotica
                         {
                             UpdateGUI(executeCommand(commandList[i].Item1), commandList[i].Item2);
                         }
+                        UpdateKakuGUI(executeCommand("k"));
+                        //if the value is lower than the value that has been put in by the user the state will switch
+                        if(Convert.ToInt32(textViewSensorValue.Text) < randvoorwaarde && textViewKaku2.Text == "Off")
+                        {
+                            socket.Send(Encoding.ASCII.GetBytes("e")); //kaku 2 switch
+                        }
 
-                        // Send a command to the Arduino server on every tick (loop though list)
-                        //UpdateGUI(executeCommand(commandList[listIndex].Item1), commandList[listIndex].Item2);  //e.g. UpdateGUI(executeCommand("s"), textViewChangePinStateValue);
-                        //if (++listIndex >= commandList.Count) listIndex = 0;
+                    if (DateTime.Now < editText_usertijd.DateTime && textViewKaku3.Text == "Off")
+                    {
+                    ////////    socket.Send(Encoding.ASCII.GetBytes("f")); //kaku 3 switch
                     }
-                    else timerSockets.Enabled = false;  // If socket broken -> disable timer
+                    // Send a command to the Arduino server on every tick (loop though list)
+                    //UpdateGUI(executeCommand(commandList[listIndex].Item1), commandList[listIndex].Item2);  //e.g. UpdateGUI(executeCommand("s"), textViewChangePinStateValue);
+                    //if (++listIndex >= commandList.Count) listIndex = 0;
+                }
+                else timerSockets.Enabled = false;  // If socket broken -> disable timer
                 //});
             };
 
@@ -179,7 +197,6 @@ namespace Domotica
                 };
             }
         }
-
 
         //Send command to server and wait for response (blocking)
         //Method should only be called when socket existst
@@ -266,6 +283,14 @@ namespace Domotica
                 else textview.SetTextColor(Color.White);  
                 textview.Text = result;
             });
+        }
+
+        //update Kaku state GUI
+        private void UpdateKakuGUI(string v)
+        {
+            textViewKaku1.Text = Convert.ToString(v[0]);
+            textViewKaku2.Text = Convert.ToString(v[1]);
+            textViewKaku3.Text = Convert.ToString(v[2]);
         }
 
         // Connect to socket ip/prt (simple sockets)
