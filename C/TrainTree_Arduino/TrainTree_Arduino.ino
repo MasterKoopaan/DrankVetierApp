@@ -123,21 +123,6 @@ void setup()
 
 void loop()
 {
-  if (!toggled)
-  {
-    result = DistanceAv(trigPin, echoPin);
-    //Serial.print("Distance: ");
-    //Serial.print(round(result));
-    //Serial.println("cm.");
-    //Serial.print("Servo:");
-    //Serial.println(servo1.read());
-    Run(result, minD, maxD);
-    delay(100);
-    //Serial.println("false");
-  }
-  else {
-    //Serial.println("true");
-  }
   // Listen for incomming connection (app)
   EthernetClient ethernetClient = server.available();
   if (!ethernetClient) {
@@ -294,6 +279,7 @@ int DistanceAv(int trigger, int echoer){
            totaal += afstand;
            i++;
            j = 0;
+           return (int) totaal / 4.0;
      }
      else if(j < 3)
      {
@@ -304,7 +290,6 @@ int DistanceAv(int trigger, int echoer){
       return -1;
      }
   }
-  return (int) totaal / 4.0;
 }
 
 
@@ -321,20 +306,24 @@ void Run(int distance, int MinAcceptance, int MaxAcceptance) {
       servo1.write(0);
       Serial.println("dicht");
       counter = 0;
+      counter2 = 0;
     }
     else{
       Serial.println(counter);
       counter++;
+      counter2 = 0;
     }
   }
   else {
     if (counter2 == 4) {
       servo1.write(179);
       Serial.println("open");
+      counter = 0;
       counter2 = 0;
     }
     else{
       Serial.println(counter2);
+      counter = 0;
       counter2++;
     }
   }
