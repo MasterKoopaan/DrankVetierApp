@@ -53,7 +53,7 @@ namespace DrankVetierApp
             string config = Convert.ToString(LayersCount);
             if (config.Length < 2) config = "0" + config;
             string value = Convert.ToString(Width);
-            while (value.Length < 3) value += "0" + value;
+            while (value.Length < 3) value = "0" + value;
             config += value;
             foreach(Layer layer in Layers)
             {
@@ -74,7 +74,7 @@ namespace DrankVetierApp
             {
                 LayerInfo += layer.GetLayerInfo() + "|";
             }
-            LayerInfo.Remove(LayerInfo.Length - 1, 1);
+            LayerInfo = LayerInfo.Remove(LayerInfo.Length - 1, 1);
             return LayerInfo;
         }
     }
@@ -92,7 +92,7 @@ namespace DrankVetierApp
 
         public string GetLayerInfo()
         {
-            return name + ":" + Convert.ToString(span);
+            return Convert.ToString(span) + ":" + name;
         }
 
         public string GetName()
@@ -103,6 +103,16 @@ namespace DrankVetierApp
         public int GetSpan()
         {
             return span;
+        }
+
+        public void SetName(string name)
+        {
+            this.name = name;
+        }
+
+        public void SetSpan(int span)
+        {
+            this.span = span;
         }
     }
 }

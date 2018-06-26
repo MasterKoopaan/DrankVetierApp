@@ -64,7 +64,7 @@ void setup() {
   }
   server.begin();
   Serial.print("Listening address server: "); Serial.print(Ethernet.localIP());
-  Serial.print(" on port "); Serial.print(ethPort);
+  Serial.print(" on port "); Serial.println(ethPort);
 }
 
 void loop() {
@@ -74,7 +74,7 @@ void loop() {
     blink(ledPin, 200, LedPinState);
     return;
   }
-  Serial.println("User connected"); digitalWrite(ledPin, LOW); LedPinState = false;
+  Serial.println("User connected"); digitalWrite(ledPin, HIGH); LedPinState = true;
 
   while (UserClient.connected()) {
     while (UserClient.available())
@@ -88,6 +88,7 @@ void loop() {
          }         
       }
   }
+  Serial.println("User disconnected");
   ConfigureSet = false;
   InMessage = "";
 }
@@ -100,7 +101,7 @@ void Read(String InMessage, EthernetClient &UserClient) {
     case 'c':                                   //c for configure
       if(bigMessage){
         result = setConfigure(InMessage.substring(1));      //  vb. 03.120.07.04.12 - '.'  
-        Serial.println(result);
+        Serial.print("Message out: "); Serial.println(result);
         char buf[4];
         intToCharBuf(result, 3, buf);
         UserClient.println(buf);
@@ -127,42 +128,44 @@ void intToCharBuf(String s, int len, char buf[])                 //s = messeage 
 
 //returns if the Configure is correctie set
 String setConfigure(String ConfigureString) {  //vb. 03120070412  -> layers(3)width(120cm)span1(7cm)span2(4cm)span3(12cm), maxlayers = 99, maxwidth = 999cm, maxspan = 99cm 
-  Serial.println(ConfigureString);
+  Serial.print("c) Message in: "); Serial.println(ConfigureString);
   if (ConfigureString.length() >= 7){
       layers = ConfigureString.substring(0,2).toInt(); //sets layers
-      Serial.println(layers);
+      Serial.print("layerscount: "); Serial.print(layers);
       if (layers > ultrasoneSensorenCount || layers == 0) {
         return "out";
       }
-      width = ConfigureString.substring(1,4).toInt(); //sets width
-      Serial.println(width);
+      width = ConfigureString.substring(2,5).toInt(); //sets width
+      Serial.print(" width: "); Serial.print(width);
       for (int i = 0; i < layers ; i++){
         span[i] = ConfigureString.substring(5 + (2 * i), 7 + (2 * i)).toInt(); //sets span
-        Serial.println(span[i]);
+        Serial.print(" "); Serial.print(span[i]);
       }
+      Serial.println();
       ConfigureSet = true;
       return "suc";
   }
   else{
-    Serial.println(ConfigureString);
     return "err";
   }
 }
 
 //return the current amount in storage
 String getCurrentAmount() {                  //vb. 03002004010   -> layers(3)value1(2)value2(4)value3(10), maxlayers = 99, maxvalue = 999
+  Serial.print("a) ");
   String CurrentAmount = String(layers); 
   if (CurrentAmount.length() < 2) CurrentAmount = "0" + CurrentAmount;
   for (int layer = 0; layer < layers; layer++) {
     CurrentAmount += ReadLayer(layer);
   }
-  Serial.println(CurrentAmount);
+  Serial.print("Message out: "); Serial.println(CurrentAmount);
   return CurrentAmount;
 }
 
 //return the amount of units on the layer
 String ReadLayer(int layer) {                 //vb. 002 (2), maxvalue = 999
-  int counterval = width - distance(triggerPins[layer], echoPins[layer]);
+  Serial.print("Measurement layer: "); Serial.print(layer);
+  int counterval = width - Highdistance(triggerPins[layer], echoPins[layer]);
   String Amount = GetAmountLayer(counterval, span[layer]);
   //make 3 char long
   if(Amount.length() < 3) {
@@ -171,7 +174,7 @@ String ReadLayer(int layer) {                 //vb. 002 (2), maxvalue = 999
   if (Amount.length() < 3) {
     Amount = "0" + Amount;
   }
-  Serial.println(Amount);
+  Serial.print("Amount: "); Serial.println(Amount);
   return Amount;
 }
 
@@ -181,19 +184,42 @@ String GetAmountLayer (int counterval, int span) {
       return String(i);
     }
   }
+  return "000";
 }
+
+//read the avarage of 5 ultrasonische sensor readings 
+float Avgdistance(int trigger, int echo) {
+  float avg = 0;
+  for (int i = 0; i < 5; i++) {
+    avg += distance(trigger, echo);
+    delayMicroseconds(10);
+  }
+  return avg / 5;
+}
+
+//read the avarage of 5 ultrasonische sensor readings 
+float Highdistance(int trigger, int echo) {
+  float high = 0;
+  float dis = 0;
+  for (int i = 0; i < 8; i++) {
+    dis = distance(trigger, echo);
+    if (dis > high) {
+      high = dis;
+    }
+    delayMicroseconds(10);
+  }
+  Serial.println();
+  return high;
+}
+
 //read ultrasonische sensor
 float distance(int trigger, int echo){
-
-  digitalWrite(trigger, LOW);
-  delayMicroseconds(2);
-
   digitalWrite(trigger, HIGH);
   delayMicroseconds(10);
   digitalWrite(trigger, LOW);
   tijd = pulseIn(echo, HIGH, 12371);
   afstand = tijd*0.034/2;
-
+  Serial.print(" "); Serial.print(afstand);
   return afstand;
 }
 

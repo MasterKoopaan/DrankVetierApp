@@ -43,7 +43,6 @@ namespace DrankVetierApp
 
             // Get config en data
             rackConfig = DataHandler.GetConfig();
-            rackConfig = new RackConfig(25, 1, "7:Bier");   //temp!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             rackData = DataHandler.GetData();
 
             // Update ListViewResults and Buttons Enabled default state
@@ -67,6 +66,14 @@ namespace DrankVetierApp
             // Go to options to set config
             buttonOptions.Click += (slender, e) =>
             {
+                //if connected, stop connection
+                if (socket != null)
+                {
+                    socket.Close();
+                    socket = null;
+                }
+                UpdateConnectionState(4);
+                //go to Options Acivity
                 Intent nextActivityOptions = new Intent(this, typeof(OptionsActivity));
                 StartActivity(nextActivityOptions);
             };
@@ -90,11 +97,18 @@ namespace DrankVetierApp
                 string result = executeSend(3 + rackConfig.GetLayersCount() * 3 , "a");                 // Send toggle-command to the Arduino
                 if (result != "err")
                 {
-                    rackData = DataHandler.SetData(result, rackConfig.GetLayersCount());
-                    DataHandler.SaveData(rackData);
-                    ListViewResults_Adapter ConfigAdapter = new ListViewResults_Adapter(this, new Rack(rackConfig.Layers, rackData.amounts));
-                    listViewResults.Adapter = ConfigAdapter;
-                    textViewUpdated.Text = rackData.updated.ToString("h:mm:ss"); 
+                    try
+                    {
+                        rackData = DataHandler.SetData(result, rackConfig.GetLayersCount());
+                        DataHandler.SaveData(rackData);
+                        ListViewResults_Adapter ConfigAdapter = new ListViewResults_Adapter(this, new Rack(rackConfig.Layers, rackData.amounts));
+                        listViewResults.Adapter = ConfigAdapter;
+                        textViewUpdated.Text = rackData.updated.ToString("h:mm:ss");
+                    } catch
+                    {
+                        Toast.MakeText(this, "Updating failed", ToastLength.Long).Show();
+                    }
+                    
                 } else
                 {
                     Toast.MakeText(this, "Updating failed", ToastLength.Long).Show();

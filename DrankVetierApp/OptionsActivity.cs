@@ -7,6 +7,7 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
+using Android.Text;
 using Android.Views;
 using Android.Widget;
 
@@ -21,8 +22,9 @@ namespace DrankVetierApp
         TextView textViewLayersValue;
         ListView listViewConfigure;
 
-        RackConfig config;
+        public RackConfig config;
         ListViewConfigure_Adapter adapter;
+        TextWatcher textWatcher = new TextWatcher();
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -43,15 +45,17 @@ namespace DrankVetierApp
             config = DataHandler.GetConfig();
             if (config == null)
             {
-                config = new RackConfig(0, 1, "7:Empty"); //|6:Bier|3:S
+                config = new RackConfig(0, 1, "0:"); //|6:Bier|3:S
             }
 
             //set start point view
             editTextWidth.Text = Convert.ToString(config.GetWidth());
             textViewLayersValue.Text = Convert.ToString(config.GetLayersCount());
 
-            adapter = new ListViewConfigure_Adapter(this, config.Layers);
-            listViewConfigure.Adapter = adapter;
+            UpdateListViewConfig();
+            //adapter = new ListViewConfigure_Adapter(this, config.Layers);
+            //adapter.TxtChanged += OnTxtChanged;
+            //listViewConfigure.Adapter = adapter;
 
             //listViewConfigure.event += subscibe 
 
@@ -73,7 +77,7 @@ namespace DrankVetierApp
                     LayersCount++;
                     config.SetLayersCount(LayersCount);
                     UpdateTextViewLayersCount(LayersCount);
-                    config.Layers.Add(new Layer(0, "Empty"));
+                    config.Layers.Add(new Layer(0, ""));
                     //update list view
                     UpdateListViewConfig();
                 }
@@ -132,9 +136,9 @@ namespace DrankVetierApp
         /// <returns></returns>
         public bool CheckNewConfig()
         {
-            if (config.GetWidth() <= 0 || config.GetWidth() > 99)
+            if (config.GetWidth() <= 0 || config.GetWidth() > 999)
             {
-                Toast.MakeText(this, "The set With is not valid, it needs to be between 1 and 99", ToastLength.Long).Show();
+                Toast.MakeText(this, "The set With is not valid, it needs to be between 1 and 999", ToastLength.Long).Show();
                 return false;
             }
             for (int i = 0; i < config.Layers.Count(); i++)
@@ -163,7 +167,38 @@ namespace DrankVetierApp
         public void UpdateListViewConfig()
         {
             adapter = new ListViewConfigure_Adapter(this, config.Layers);
+            //adapter.SpanChanged += OnSpanChanged;
+            //adapter.NameChanged += OnNameChanged;
+            adapter.TxtChanged += OnTxtChanged;
             listViewConfigure.Adapter = adapter;
+            //OnTxtChanged += OnTxtChanged;
+        }
+
+        private void OnSpanChanged(object sender, TextChangedEventArgs e)
+        {
+            
+            config.Layers[0].SetSpan(Convert.ToInt16(e.Text));
+        }
+
+        public void OnNameChanged(object source, TextChangedEventArgs e)
+        { 
+            config.Layers[0].SetName(Convert.ToString(e.Text));
+        }
+        
+        public void OnTxtChanged(object source, Custom_TextChangedArgs e)
+        {
+            if (e.type == "name")
+            {
+                config.Layers[e.position].SetName(e.text);
+            } else
+            {
+                if (e.text == "")
+                {
+                    e.text = "0";
+                }
+                config.Layers[e.position].SetSpan(Convert.ToInt32(e.text));
+            }
+            
         }
     }
 }

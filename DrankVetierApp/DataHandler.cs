@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -30,6 +31,7 @@ namespace DrankVetierApp
             MyRackConfigEdit.PutString("Width", Convert.ToString(config.GetWidth()));
             MyRackConfigEdit.PutString("LayersCount", Convert.ToString(config.GetLayersCount()));
             MyRackConfigEdit.PutString("LayersInfo", config.GetLayersInfo());
+            MyRackConfigEdit.Apply();
         }
 
         /// <summary>
@@ -53,6 +55,8 @@ namespace DrankVetierApp
         }
 
         // RackData handlers
+
+        const string FMT = "O";     //https://stackoverflow.com/questions/10798980/convert-c-sharp-date-time-to-string-and-back
 
         /// <summary>
         /// Returns the new RackData with incoming data
@@ -84,7 +88,7 @@ namespace DrankVetierApp
             var MyRackData = Application.Context.GetSharedPreferences("MyRackData", FileCreationMode.Private);
             var MyRackDataEdit = MyRackData.Edit();
             MyRackDataEdit.PutString("Amounts", data.GetAmountsString());
-            //MyRackDataEdit.PutString("Updated", data.updated);
+            MyRackDataEdit.PutString("Updated", data.updated.ToString(FMT));
         }
 
         /// <summary>
@@ -98,7 +102,7 @@ namespace DrankVetierApp
             string Updated = MyRackData.GetString("Updated", "0");
             if (Amounts != "-1" && Updated != "0")
             {
-                return new RackData(Array.ConvertAll(Amounts.Split('|'), int.Parse), DateTime.Now);
+                return new RackData(Array.ConvertAll(Amounts.Split('|'), int.Parse), DateTime.ParseExact(Updated, FMT, CultureInfo.InvariantCulture));
             }
             else
             {
@@ -115,6 +119,7 @@ namespace DrankVetierApp
             var MyRackDataEdit = MyRackData.Edit();
             MyRackDataEdit.PutString("Amounts", "-1");
             MyRackDataEdit.PutString("Updated", "0");
+            MyRackDataEdit.Apply();
         }
     }
 }
