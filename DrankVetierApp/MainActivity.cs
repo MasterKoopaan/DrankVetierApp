@@ -19,7 +19,7 @@ namespace DrankVetierApp
         public RackConfig rackConfig;
         public RackData rackData;
         Socket socket = null;
-        Timer timerSockets;
+        //Timer timerSockets;
 
         Button buttonConnect, buttonUpdate, buttonExtra, buttonOptions;
         ListView listViewResults;
@@ -37,8 +37,6 @@ namespace DrankVetierApp
             buttonUpdate = FindViewById<Button>(Resource.Id.buttonUpdate);
             buttonExtra = FindViewById<Button>(Resource.Id.buttonExtra);
             buttonOptions = FindViewById<Button>(Resource.Id.buttonOptions);
-                //buttonOptions.SetBackgroundColor(Android.Graphics.Color.Red);
-                //buttonOptions.BackgroundTintMode = ColorStateList.ValueOf(Color.HoloRedLight); 
             listViewResults = FindViewById<ListView>(Resource.Id.listViewResults);
             textViewConnectie = FindViewById<TextView>(Resource.Id.textViewConnectie);
             textViewUpdated = FindViewById<TextView>(Resource.Id.textViewUpdated);
@@ -55,8 +53,9 @@ namespace DrankVetierApp
                 buttonConnect.Enabled = false;
             } else 
             {
-                ListViewResults_Adapter ConfigAdapter = new ListViewResults_Adapter(this, new Rack(rackConfig.Layers, rackData.amounts));
+                ListViewResults_Adapter ConfigAdapter = new ListViewResults_Adapter(this, new Rack(rackConfig.Layers, rackData == null ? null : rackData.amounts));
                 listViewResults.Adapter = ConfigAdapter;
+                if (rackData != null) textViewUpdated.Text = rackData.updated.ToString("h:mm:ss");
             }
             buttonUpdate.Enabled = false;
             textViewConnectie.SetTextColor(Android.Graphics.Color.Red);
@@ -67,34 +66,49 @@ namespace DrankVetierApp
             // Go to options to set config
             buttonOptions.Click += (slender, e) =>
             {
+                //if connected, stop connection
+                if (socket != null)
+                {
+                    socket.Close();
+                    socket = null;
+                }
+                UpdateConnectionState(4);
+                //go to Options Acivity
                 Intent nextActivityOptions = new Intent(this, typeof(OptionsActivity));
                 StartActivity(nextActivityOptions);
             };
 
-            timerSockets = new System.Timers.Timer() { Interval = 10000, Enabled = false }; // Interval >= 750
-            timerSockets.Elapsed += (obj, args) =>
-            {
-                //RunOnUiThread(() =>
-                //{
-                if (socket != null) // only if socket exists
-                {
+            //timerSockets = new System.Timers.Timer() { Interval = 10000, Enabled = false }; // Interval >= 750
+            //timerSockets.Elapsed += (obj, args) =>
+            //{
+            //    //RunOnUiThread(() =>
+            //    //{
+            //    if (socket != null) // only if socket exists
+            //    {
                     
-                }
-                else timerSockets.Enabled = false;  // If socket broken -> disable timer
-                //});
-            };
+            //    }
+            //    else timerSockets.Enabled = false;  // If socket broken -> disable timer
+            //    //});
+            //};
 
             //If connected ask the amount on the layers
             buttonUpdate.Click += (sender, e) =>
             {
-                string result = executeGetData();                 // Send toggle-command to the Arduino
+                string result = executeSend(3 + rackConfig.GetLayersCount() * 3 , "a");                 // Send toggle-command to the Arduino
                 if (result != "err")
                 {
-                    rackData = DataHandler.SetData(result, rackConfig.GetLayersCount());
-                    DataHandler.SaveData(rackData);
-                    ListViewResults_Adapter ConfigAdapter = new ListViewResults_Adapter(this, new Rack(rackConfig.Layers, rackData.amounts));
-                    listViewResults.Adapter = ConfigAdapter;
-                    //textViewUpdated = ;
+                    try
+                    {
+                        rackData = DataHandler.SetData(result, rackConfig.GetLayersCount());
+                        DataHandler.SaveData(rackData);
+                        ListViewResults_Adapter ConfigAdapter = new ListViewResults_Adapter(this, new Rack(rackConfig.Layers, rackData.amounts));
+                        listViewResults.Adapter = ConfigAdapter;
+                        textViewUpdated.Text = rackData.updated.ToString("h:mm:ss");
+                    } catch
+                    {
+                        Toast.MakeText(this, "Updating failed", ToastLength.Long).Show();
+                    }
+                    
                 } else
                 {
                     Toast.MakeText(this, "Updating failed", ToastLength.Long).Show();
@@ -105,9 +119,9 @@ namespace DrankVetierApp
             buttonConnect.Click += (sender, e) =>
             {
                 //Validate the user input (IP address and port)
-                if (CheckValidIpAddress("Ip") && CheckValidPort("Port"))
+                if (CheckValidIpAddress("192.168.0.100") && CheckValidPort("3300"))
                 {
-                    ConnectSocket("Ip", "Port");
+                    ConnectSocket("192.168.0.100", "3300");
                 }
                 else UpdateConnectionState(3);
             };
@@ -127,15 +141,34 @@ namespace DrankVetierApp
                         socket.Connect(new IPEndPoint(IPAddress.Parse(ip), Convert.ToInt32(prt)));
                         if (socket.Connected)
                         {
-                            socket.Send(Encoding.ASCII.GetBytes('c' + rackConfig.getConfig() + '\n'));
-                            UpdateConnectionState(2);
-                            textViewConnectie.Text = "Disconnect";
-                            timerSockets.Enabled = true;                //Activate timer for communication with Arduino     
+                            string result = executeSend(4, 'c' + rackConfig.getConfig());
+                            if (result == "suc")
+                            {
+                                UpdateConnectionState(2);
+                                //timerSockets.Enabled = true;                //Activate timer for communication with Arduino    
+                            }
+                            else
+                            {
+                                if (result == "out")
+                                {
+                                    Toast.MakeText(this, "The device your connecting to does not suport the amount of layers you have set in the config", ToastLength.Long).Show();
+                                }
+                                else if (result == "err")
+                                {
+                                    Toast.MakeText(this, "Config invalid, make sure that you have a valid config", ToastLength.Long).Show();
+                                }
+                                if (socket != null)
+                                {
+                                    socket.Close();
+                                    socket = null;
+                                }
+                                UpdateConnectionState(4);
+                            }
                         }
                     }
                     catch (Exception exception)
                     {
-                        timerSockets.Enabled = false;
+                        //timerSockets.Enabled = false;
                         if (socket != null)
                         {
                             socket.Close();
@@ -147,7 +180,7 @@ namespace DrankVetierApp
                 else // disconnect socket
                 {
                     socket.Close(); socket = null;
-                    timerSockets.Enabled = false;
+                    //timerSockets.Enabled = false;
                     UpdateConnectionState(4);
                     textViewConnectie.Text = "Connect";
                 }
@@ -159,11 +192,12 @@ namespace DrankVetierApp
             {
                 case 1:     //connecting
                     textViewConnectie.Text = "Connecting. . .";
-                    textViewConnectie.SetTextColor(Android.Graphics.Color.Green);
+                    textViewConnectie.SetTextColor(Android.Graphics.Color.Blue);
                     break;
                 case 2:     //connected
                     textViewConnectie.Text = "Connected";
-                    textViewConnectie.SetTextColor(Android.Graphics.Color.Blue);
+                    textViewConnectie.SetTextColor(Android.Graphics.Color.Green);
+                    buttonUpdate.Enabled = true;
                     break;
                 case 3:     //invalid ip or/and poort
                     textViewConnectie.Text = "Invalid Connection data";
@@ -172,33 +206,35 @@ namespace DrankVetierApp
                 case 4:     //not connected
                     textViewConnectie.Text = "Not Connected";
                     textViewConnectie.SetTextColor(Android.Graphics.Color.Red);
+                    buttonUpdate.Enabled = false;
                     break;
             }
         }
 
-        public string executeGetData()
+        public string executeSend(int messagesize, string send)
         {
-            byte[] buffer = new byte[495]; // response is max 496 characters long
+            byte[] buffer = new byte[messagesize]; // response is max 496 characters long by "a", and 4 by "c"
             int bytesRead = 0;
             string result = "";
 
             if (socket != null)
             {
                 //Send command to server
-                socket.Send(Encoding.ASCII.GetBytes("a" + '\n'));
+                socket.Send(Encoding.ASCII.GetBytes(send + '\n'));
 
                 try //Get response from server
                 {
                     //Store received bytes (always 4 bytes, ends with \n)
                     bytesRead = socket.Receive(buffer);  // If no data is available for reading, the Receive method will block until data is available,
                     //Read available bytes.              // socket.Available gets the amount of data that has been received from the network and is available to be read
-                    while (socket.Available > 0)
-                    {
-                        bytesRead = socket.Receive(buffer);
-                    }
-                    if (bytesRead >= 5)
+                    //while (socket.Available > 0)
+                    //{
+                    //    bytesRead = socket.Receive(buffer);
+                    //}
+                    if (bytesRead > 3)
                         result = Encoding.ASCII.GetString(buffer, 0, bytesRead - 1); // skip \n
                     else result = "err";
+                    while (socket.Available > 0) bytesRead = socket.Receive(buffer);
                 }
                 catch (Exception exception)
                 {

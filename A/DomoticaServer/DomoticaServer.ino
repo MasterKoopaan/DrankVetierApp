@@ -64,6 +64,7 @@ bool pinState = false;                   // Variable to store actual pin state
 bool pinChange = false;                  // Variable to store actual pin change
 int  sensorValue = 0, sensorValue2 = 0;  // Variable to store actual sensor value   analoge pin 0,1
 bool stateKaku[3] = {false, false, false};
+String KakuStates = "";
 
 void setup()
 {
@@ -87,6 +88,8 @@ void setup()
    digitalWrite(RFPin, LOW);
    digitalWrite(ledPin, LOW);
    digitalWrite(infoPin, LOW);
+
+   switchDefault(false);
 
    //Try to get an IP address from the DHCP server.
    if (Ethernet.begin(mac) == 0)
@@ -136,8 +139,8 @@ void loop()
         
       // Activate pin based op pinState
       if (pinChange) {
-         if (pinState) { digitalWrite(ledPin, HIGH); switchDefault(true); }
-         else { switchDefault(false); digitalWrite(ledPin, LOW); }
+         if (pinState) { digitalWrite(ledPin, HIGH); }   // switchDefault(true);
+         else { digitalWrite(ledPin, LOW); }             // switchDefault(false);
          pinChange = false;
       }
    
@@ -216,6 +219,16 @@ void executeCommand(char cmd)
             break;
          case 'i':    
             digitalWrite(infoPin, HIGH);
+            break;
+         case 'k':
+            for(int i=0; i < 3; i++)
+            {
+                KakuStates += stateKaku[i];
+            }
+            intToCharBuf(KakuStates.toInt(), buf, 4);                // convert to charbuffer
+            server.write(buf, 4);                             // response is always 4 chars (\n included)
+            Serial.print("Sensor: "); Serial.println(buf);
+            //kakuStates = "";
             break;
          default:
             digitalWrite(infoPin, LOW);
