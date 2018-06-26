@@ -55,7 +55,7 @@ namespace Domotica
         Button buttonChangePinState;
         TextView textViewServerConnect, textViewTimerStateValue, textViewSeekBar, textViewKaku1, textViewKaku2, textViewKaku3;
         public TextView textViewChangePinStateValue, textViewSensorValue, textViewSensorValue2, textViewDebugValue;
-        EditText editTextIPAddress, editTextIPPort, editText_userinput, editText_usertijd;
+        EditText editTextIPAddress, editTextIPPort, editText_userTimeOn, editText_userTimeOff;
         SeekBar seekBar;
 
         Timer timerClock, timerSockets;             // Timers   
@@ -63,7 +63,7 @@ namespace Domotica
         List<Tuple<string, TextView>> commandList = new List<Tuple<string, TextView>>();  // List for commands and response places on UI
 
         int randvoorwaarde = 200;
-        
+        DateTime timeOn, timeOff;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -83,8 +83,8 @@ namespace Domotica
             textViewDebugValue = FindViewById<TextView>(Resource.Id.textViewDebugValue);
             editTextIPAddress = FindViewById<EditText>(Resource.Id.editTextIPAddress);
             editTextIPPort = FindViewById<EditText>(Resource.Id.editTextIPPort);
-            editText_userinput = FindViewById<EditText>(Resource.Id.editText_userinput);
-            editText_usertijd = FindViewById<EditText>(Resource.Id.editText_usertijd);
+            editText_userTimeOn = FindViewById<EditText>(Resource.Id.editText_userTimeOn);   
+            editText_userTimeOff = FindViewById<EditText>(Resource.Id.editText_userTimeOff);    
 
             seekBar = FindViewById<SeekBar>(Resource.Id.seekBar1);
             textViewSeekBar = FindViewById<TextView>(Resource.Id.textViewSeekBar1);
@@ -105,9 +105,9 @@ namespace Domotica
                 timerSockets.Enabled = true;
             };
 
-            editText_userinput.TextChanged += (slender, e) =>
+            editText_userTimeOn.TextChanged += (slender, e) =>
             {
-                randvoorwaarde = Convert.ToInt32(editText_userinput.Text);
+                randvoorwaarde = Convert.ToInt32(editText_userTimeOn.Text);
             };
 
             UpdateConnectionState(4, "Disconnected"); // 4 = een out of bound value, dus de default == disconnect
@@ -131,8 +131,8 @@ namespace Domotica
             timerSockets = new System.Timers.Timer() { Interval = 10000, Enabled = false }; // Interval >= 750
             timerSockets.Elapsed += (obj, args) =>
             {
-                //RunOnUiThread(() =>
-                //{
+                RunOnUiThread(() =>
+                {
                     if (socket != null) // only if socket exists
                     {
                         for (int i = 0; i < commandList.Count; i++)
@@ -145,17 +145,23 @@ namespace Domotica
                         {
                             socket.Send(Encoding.ASCII.GetBytes("e")); //kaku 2 switch
                         }
+                        if (DateTime.TryParse(editText_userTimeOn.Text, out timeOn) && DateTime.TryParse(editText_userTimeOff.Text, out timeOff))
+                        {
+                            if (DateTime.Now > timeOn && DateTime.Now < timeOff && textViewKaku3.Text == "Off")
+                            {
+                                if (textViewKaku3.Text == "Off") socket.Send(Encoding.ASCII.GetBytes("f")); //kaku 3 switch
+                            } else if (textViewKaku3.Text == "On")
+                            {
+                                socket.Send(Encoding.ASCII.GetBytes("f")); //kaku 3 switch
+                            }
+                        }
 
-                    if (DateTime.Now < editText_usertijd.DateTime && textViewKaku3.Text == "Off")
-                    {
-                    ////////    socket.Send(Encoding.ASCII.GetBytes("f")); //kaku 3 switch
-                    }
                     // Send a command to the Arduino server on every tick (loop though list)
                     //UpdateGUI(executeCommand(commandList[listIndex].Item1), commandList[listIndex].Item2);  //e.g. UpdateGUI(executeCommand("s"), textViewChangePinStateValue);
                     //if (++listIndex >= commandList.Count) listIndex = 0;
                 }
                 else timerSockets.Enabled = false;  // If socket broken -> disable timer
-                //});
+                });
             };
 
             //Add the "Connect" button handler.

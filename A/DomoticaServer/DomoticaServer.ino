@@ -89,6 +89,8 @@ void setup()
    digitalWrite(ledPin, LOW);
    digitalWrite(infoPin, LOW);
 
+   switchDefault(false);
+
    //Try to get an IP address from the DHCP server.
    if (Ethernet.begin(mac) == 0)
    {
@@ -137,8 +139,8 @@ void loop()
         
       // Activate pin based op pinState
       if (pinChange) {
-         if (pinState) { digitalWrite(ledPin, HIGH); switchDefault(true); }
-         else { switchDefault(false); digitalWrite(ledPin, LOW); }
+         if (pinState) { digitalWrite(ledPin, HIGH); }   // switchDefault(true);
+         else { digitalWrite(ledPin, LOW); }             // switchDefault(false);
          pinChange = false;
       }
    

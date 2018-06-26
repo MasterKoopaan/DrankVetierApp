@@ -84,11 +84,11 @@ namespace Domotica
 			// aapt resource value: 0x7f060008
 			public const int editTextIPPort = 2131099656;
 			
-			// aapt resource value: 0x7f06001c
-			public const int editText_userinput = 2131099676;
-			
 			// aapt resource value: 0x7f06001e
-			public const int editText_usertijd = 2131099678;
+			public const int editText_userTimeOff = 2131099678;
+			
+			// aapt resource value: 0x7f06001c
+			public const int editText_userTimeOn = 2131099676;
 			
 			// aapt resource value: 0x7f06001f
 			public const int exit = 2131099679;
