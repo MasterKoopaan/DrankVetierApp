@@ -17,14 +17,15 @@ namespace DrankVetierApp
     public class OptionsActivity : Activity
     {
         //objects and values:
-        Button buttonSave, buttonCancel, buttonPlus, buttonMin;
+        Button buttonSave, buttonCancel, buttonIp, buttonPlus, buttonMin;
         EditText editTextWidth;
         TextView textViewLayersValue;
         ListView listViewConfigure;
 
         public RackConfig config;
         ListViewConfigure_Adapter adapter;
-        TextWatcher textWatcher = new TextWatcher();
+
+        bool warning_saveconfig_first = false;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -36,6 +37,7 @@ namespace DrankVetierApp
             //fill view object;
             buttonSave = FindViewById<Button>(Resource.Id.buttonSave);
             buttonCancel = FindViewById<Button>(Resource.Id.buttonCancel);
+            buttonIp = FindViewById<Button>(Resource.Id.buttonIp);
             editTextWidth = FindViewById<EditText>(Resource.Id.editTextWidth);
             textViewLayersValue = FindViewById<TextView>(Resource.Id.textViewLayersValue);
             buttonPlus = FindViewById<Button>(Resource.Id.buttonPlus);
@@ -51,13 +53,7 @@ namespace DrankVetierApp
             //set start point view
             editTextWidth.Text = Convert.ToString(config.GetWidth());
             textViewLayersValue.Text = Convert.ToString(config.GetLayersCount());
-
-            UpdateListViewConfig();
-            //adapter = new ListViewConfigure_Adapter(this, config.Layers);
-            //adapter.TxtChanged += OnTxtChanged;
-            //listViewConfigure.Adapter = adapter;
-
-            //listViewConfigure.event += subscibe 
+            UpdateListViewConfig(); 
 
             //change the amount of Width
             editTextWidth.TextChanged += (slender, e) => {
@@ -119,6 +115,20 @@ namespace DrankVetierApp
             {
                 GoBackToMain();
             };
+
+            //go to change ip activity
+            buttonIp.Click += (sender, e) =>
+            {
+                if (!warning_saveconfig_first)
+                {
+                    warning_saveconfig_first = true;
+                    Toast.MakeText(this, "Make sure that the changes to the config are saved before going to conection configere", ToastLength.Long).Show();
+                }
+                else
+                {
+                    GoToIp();
+                }
+            };
         }
 
         /// <summary>
@@ -128,6 +138,12 @@ namespace DrankVetierApp
         {
             Intent newActivityMain = new Intent(this, typeof(MainActivity));
             StartActivity(newActivityMain);
+        }
+
+        public void GoToIp()
+        {
+            Intent newActivityip = new Intent(this, typeof(SetIpActivity));
+            StartActivity(newActivityip);
         }
 
         /// <summary>
@@ -169,7 +185,7 @@ namespace DrankVetierApp
             adapter = new ListViewConfigure_Adapter(this, config.Layers);
             //adapter.SpanChanged += OnSpanChanged;
             //adapter.NameChanged += OnNameChanged;
-            adapter.TxtChanged += OnTxtChanged;
+            adapter.TextChanged += OnTxtChanged;
             listViewConfigure.Adapter = adapter;
             //OnTxtChanged += OnTxtChanged;
         }

@@ -18,10 +18,7 @@ namespace DrankVetierApp
     {
         Context context;
         List<Layer> Layers;
-        //public EventOnTextChanged TxtChanged = new EventOnTextChanged();
-        public event EventHandler<Custom_TextChangedArgs> TxtChanged;
-        //public EventHandler<TextChangedEventArgs> NameChanged;
-        //public EventHandler<TextChangedEventArgs> SpanChanged;
+        public event EventHandler<Custom_TextChangedArgs> TextChanged;
 
         public ListViewConfigure_Adapter(Context context, List<Layer> Layers)
         {
@@ -67,25 +64,20 @@ namespace DrankVetierApp
                 view.Tag = holder;
             }
 
+            //fill listitem with data
             holder.Layer.Text = Convert.ToString(position + 1) + ".";
             holder.Span.Text = Convert.ToString(Layers[position].GetSpan());
             holder.Name.Text = Layers[position].GetName();
 
-            //https://demonuts.com/android-listview-edittext/ https://www.google.com/search?q=edittext+get+position+in+listview+on+text+change+xamarin+android&client=firefox-b-ab&source=lnms&tbm=vid&sa=X&ved=0ahUKEwjkxbe_4O_bAhWJ6aQKHU3jBpwQ_AUICigB&biw=1920&bih=943 http://www.learn-android-easily.com/2013/06/using-textwatcher-in-android.html
-            //holder.Span.TextChanged += SpanChanged;
-
-            //holder.Name.TextChanged += NameChanged;
-            //holder.Span.AddTextChangedListener(new TextWatcher(holder.Span.Text, position, "span"));
-            //holder.Name.AddTextChangedListener(new TextWatcher(holder.Name.Text, position, "name"));
+            //add event liseners
             holder.Span.TextChanged += (slender, e) =>
             {
-                if (TxtChanged != null)
-                    TxtChanged(null, new Custom_TextChangedArgs(holder.Span.Text, position, "span"));
+                if (TextChanged != null)
+                    TextChanged(null, new Custom_TextChangedArgs(holder.Span.Text, position, "span"));
             };
             holder.Name.TextChanged += (slender, e) =>
             {
-                if (TxtChanged != null)
-                    TxtChanged(null, new Custom_TextChangedArgs(holder.Name.Text, position, "name"));
+                TextChanged?.Invoke(null, new Custom_TextChangedArgs(holder.Name.Text, position, "name"));
             };
 
             return view;
@@ -101,6 +93,7 @@ namespace DrankVetierApp
         }
     }
 
+    //holder with infladed listitem info 
     class ListViewConfigure_AdapterViewHolder : Java.Lang.Object
     {
         public TextView Layer { get; set; }
@@ -108,4 +101,18 @@ namespace DrankVetierApp
         public EditText Name { get; set; }
     }
 
+    //custom event arguments class for TextChanged event
+    public class Custom_TextChangedArgs
+    {
+        public string text;
+        public int position;
+        public string type;
+
+        public Custom_TextChangedArgs(string text, int position, string type)
+        {
+            this.text = text;
+            this.position = position;
+            this.type = type;
+        }
+    }
 }

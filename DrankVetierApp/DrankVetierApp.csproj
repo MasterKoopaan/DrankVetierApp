@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataHandler.cs" />
+    <Compile Include="IpData.cs" />
     <Compile Include="ListViewConfigure_Adapter.cs" />
     <Compile Include="ListViewResults_Adapter.cs" />
     <Compile Include="MainActivity.cs" />
@@ -63,7 +64,7 @@
     <Compile Include="RackData.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TextWatcher.cs" />
+    <Compile Include="SetIpActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="GettingStarted.Xamarin" />
@@ -77,6 +78,9 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\Main_item.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\Ip.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

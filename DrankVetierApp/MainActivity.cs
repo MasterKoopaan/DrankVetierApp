@@ -5,8 +5,6 @@ using System.Net.Sockets;
 using System.Net;
 using System;
 using Android.Content;
-using System.Timers;
-using Android.Content.Res;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -18,8 +16,9 @@ namespace DrankVetierApp
         // Initialize Object
         public RackConfig rackConfig;
         public RackData rackData;
+        public IpData ipData;
         Socket socket = null;
-        //Timer timerSockets;
+            //Timer timerSockets;
 
         Button buttonConnect, buttonUpdate, buttonExtra, buttonOptions;
         ListView listViewResults;
@@ -41,9 +40,10 @@ namespace DrankVetierApp
             textViewConnectie = FindViewById<TextView>(Resource.Id.textViewConnectie);
             textViewUpdated = FindViewById<TextView>(Resource.Id.textViewUpdated);
 
-            // Get config en data
+            // Get config, data en ip
             rackConfig = DataHandler.GetConfig();
             rackData = DataHandler.GetData();
+            ipData = DataHandler.GetIp();
 
             // Update ListViewResults and Buttons Enabled default state
             if (rackConfig == null)
@@ -119,11 +119,18 @@ namespace DrankVetierApp
             buttonConnect.Click += (sender, e) =>
             {
                 //Validate the user input (IP address and port)
-                if (CheckValidIpAddress("192.168.0.100") && CheckValidPort("3300"))
+                if (ipData != null)
                 {
-                    ConnectSocket("192.168.0.100", "3300");
+                    ConnectSocket(ipData.ip, ipData.poort);
                 }
                 else UpdateConnectionState(3);
+            };
+            buttonConnect.LongClick += (sender, e) =>
+            {
+                Disconnect();
+                //go to SetIp Acivity
+                Intent nextActivitySetIp = new Intent(this, typeof(SetIpActivity));
+                StartActivity(nextActivitySetIp);
             };
         }
 
@@ -169,12 +176,7 @@ namespace DrankVetierApp
                     catch (Exception exception)
                     {
                         //timerSockets.Enabled = false;
-                        if (socket != null)
-                        {
-                            socket.Close();
-                            socket = null;
-                        }
-                        UpdateConnectionState(4);
+                        Disconnect();
                     }
                 }
                 else // disconnect socket
@@ -182,7 +184,7 @@ namespace DrankVetierApp
                     socket.Close(); socket = null;
                     //timerSockets.Enabled = false;
                     UpdateConnectionState(4);
-                    textViewConnectie.Text = "Connect";
+                    
                 }
             });
         }
@@ -198,6 +200,7 @@ namespace DrankVetierApp
                     textViewConnectie.Text = "Connected";
                     textViewConnectie.SetTextColor(Android.Graphics.Color.Green);
                     buttonUpdate.Enabled = true;
+                    textViewConnectie.Text = "Disconnect";
                     break;
                 case 3:     //invalid ip or/and poort
                     textViewConnectie.Text = "Invalid Connection data";
@@ -207,8 +210,19 @@ namespace DrankVetierApp
                     textViewConnectie.Text = "Not Connected";
                     textViewConnectie.SetTextColor(Android.Graphics.Color.Red);
                     buttonUpdate.Enabled = false;
+                    textViewConnectie.Text = "Connect";
                     break;
             }
+        }
+
+        public void Disconnect()
+        {
+            if (socket != null)
+            {
+                socket.Close();
+                socket = null;
+            }
+            UpdateConnectionState(4);
         }
 
         public string executeSend(int messagesize, string send)
@@ -248,39 +262,6 @@ namespace DrankVetierApp
                 }
             }
             return result;
-        }
-
-        //Check if the entered IP address is valid.
-        private bool CheckValidIpAddress(string ip)
-        {
-            if (ip != "")
-            {
-                //Check user input against regex (check if IP address is not empty).
-                Regex regex = new Regex("\\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\.|$)){4}\\b");
-                Match match = regex.Match(ip);
-                return match.Success;
-            }
-            else return false;
-        }
-
-        //Check if the entered port is valid.
-        private bool CheckValidPort(string port)
-        {
-            //Check if a value is entered.
-            if (port != "")
-            {
-                Regex regex = new Regex("[0-9]+");
-                Match match = regex.Match(port);
-
-                if (match.Success)
-                {
-                    int portAsInteger = Int32.Parse(port);
-                    //Check if port is in range.
-                    return ((portAsInteger >= 0) && (portAsInteger <= 65535));
-                }
-                else return false;
-            }
-            else return false;
         }
     }
 }

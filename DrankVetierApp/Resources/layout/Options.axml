@@ -16,7 +16,14 @@
             android:layout_height="60dp"
             android:layout_marginLeft="10dp"
             android:id="@+id/buttonCancel" />
+        <Button
+            android:text="@string/buttonIp"
+            android:layout_width="75dp"
+            android:layout_height="60dp"
+            android:layout_marginRight="10dp"
+            android:id="@+id/buttonIp" />
         <TextView
+            android:paddingLeft="10dp"
             android:text="@string/textViewOptionsTitel"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:id="@+id/textViewOptionsTitel"
