@@ -60,9 +60,6 @@ namespace DrankVetierApp
             buttonUpdate.Enabled = false;
             textViewConnectie.SetTextColor(Android.Graphics.Color.Red);
 
-        //! NOT IMPLEMENTED !
-        buttonExtra.Enabled = false;
-
             // Go to options to set config
             buttonOptions.Click += (slender, e) =>
             {
@@ -131,6 +128,14 @@ namespace DrankVetierApp
                 //go to SetIp Acivity
                 Intent nextActivitySetIp = new Intent(this, typeof(SetIpActivity));
                 StartActivity(nextActivitySetIp);
+            };
+
+            buttonExtra.Click += (slender, e) =>
+            {
+                Disconnect();
+                //go to extra Acivity
+                Intent nextActivityExtra = new Intent(this, typeof(ExtraActivity));
+                StartActivity(nextActivityExtra);
             };
         }
 

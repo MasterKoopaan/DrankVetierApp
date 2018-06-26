@@ -44,116 +44,125 @@ namespace DrankVetierApp
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f040018
-			public const int buttonCancel = 2130968600;
-			
-			// aapt resource value: 0x7f040009
-			public const int buttonCancelIp = 2130968585;
+			// aapt resource value: 0x7f04001b
+			public const int buttonCancel = 2130968603;
 			
 			// aapt resource value: 0x7f04000c
-			public const int buttonConnect = 2130968588;
-			
-			// aapt resource value: 0x7f04000e
-			public const int buttonExtra = 2130968590;
-			
-			// aapt resource value: 0x7f040019
-			public const int buttonIp = 2130968601;
-			
-			// aapt resource value: 0x7f040021
-			public const int buttonMin = 2130968609;
+			public const int buttonCancelIp = 2130968588;
 			
 			// aapt resource value: 0x7f04000f
-			public const int buttonOptions = 2130968591;
-			
-			// aapt resource value: 0x7f040020
-			public const int buttonPlus = 2130968608;
-			
-			// aapt resource value: 0x7f04001b
-			public const int buttonSave = 2130968603;
-			
-			// aapt resource value: 0x7f04000a
-			public const int buttonSaveIp = 2130968586;
-			
-			// aapt resource value: 0x7f04000d
-			public const int buttonUpdate = 2130968589;
-			
-			// aapt resource value: 0x7f040003
-			public const int editTextIp = 2130968579;
-			
-			// aapt resource value: 0x7f040024
-			public const int editTextName = 2130968612;
-			
-			// aapt resource value: 0x7f040023
-			public const int editTextSpan = 2130968611;
-			
-			// aapt resource value: 0x7f04001d
-			public const int editTextWidth = 2130968605;
-			
-			// aapt resource value: 0x7f040006
-			public const int editTextpoort = 2130968582;
-			
-			// aapt resource value: 0x7f04000b
-			public const int linearLayout1 = 2130968587;
-			
-			// aapt resource value: 0x7f040017
-			public const int linearLayout2 = 2130968599;
-			
-			// aapt resource value: 0x7f040007
-			public const int linearLayoutButtons = 2130968583;
+			public const int buttonConnect = 2130968591;
 			
 			// aapt resource value: 0x7f040011
-			public const int linearLayoutFooter = 2130968593;
-			
-			// aapt resource value: 0x7f040001
-			public const int linearLayoutIp = 2130968577;
-			
-			// aapt resource value: 0x7f040004
-			public const int linearLayoutPoort = 2130968580;
-			
-			// aapt resource value: 0x7f040022
-			public const int listViewConfigure = 2130968610;
-			
-			// aapt resource value: 0x7f040010
-			public const int listViewResults = 2130968592;
-			
-			// aapt resource value: 0x7f040015
-			public const int textViewAmount = 2130968597;
-			
-			// aapt resource value: 0x7f040012
-			public const int textViewConnectie = 2130968594;
-			
-			// aapt resource value: 0x7f040002
-			public const int textViewIp = 2130968578;
+			public const int buttonExtra = 2130968593;
 			
 			// aapt resource value: 0x7f040000
-			public const int textViewIpActivity = 2130968576;
-			
-			// aapt resource value: 0x7f040014
-			public const int textViewLayer = 2130968596;
-			
-			// aapt resource value: 0x7f04001e
-			public const int textViewLayers = 2130968606;
-			
-			// aapt resource value: 0x7f04001f
-			public const int textViewLayersValue = 2130968607;
-			
-			// aapt resource value: 0x7f040016
-			public const int textViewName = 2130968598;
-			
-			// aapt resource value: 0x7f04001a
-			public const int textViewOptionsTitel = 2130968602;
-			
-			// aapt resource value: 0x7f040005
-			public const int textViewPoort = 2130968581;
-			
-			// aapt resource value: 0x7f040013
-			public const int textViewUpdated = 2130968595;
+			public const int buttonGoBack = 2130968576;
 			
 			// aapt resource value: 0x7f04001c
-			public const int textViewWidth = 2130968604;
+			public const int buttonIp = 2130968604;
+			
+			// aapt resource value: 0x7f040024
+			public const int buttonMin = 2130968612;
+			
+			// aapt resource value: 0x7f040012
+			public const int buttonOptions = 2130968594;
+			
+			// aapt resource value: 0x7f040023
+			public const int buttonPlus = 2130968611;
+			
+			// aapt resource value: 0x7f04001e
+			public const int buttonSave = 2130968606;
+			
+			// aapt resource value: 0x7f04000d
+			public const int buttonSaveIp = 2130968589;
+			
+			// aapt resource value: 0x7f040010
+			public const int buttonUpdate = 2130968592;
+			
+			// aapt resource value: 0x7f040006
+			public const int editTextIp = 2130968582;
+			
+			// aapt resource value: 0x7f040027
+			public const int editTextName = 2130968615;
+			
+			// aapt resource value: 0x7f040026
+			public const int editTextSpan = 2130968614;
+			
+			// aapt resource value: 0x7f040020
+			public const int editTextWidth = 2130968608;
+			
+			// aapt resource value: 0x7f040009
+			public const int editTextpoort = 2130968585;
+			
+			// aapt resource value: 0x7f04000e
+			public const int linearLayout1 = 2130968590;
+			
+			// aapt resource value: 0x7f04001a
+			public const int linearLayout2 = 2130968602;
+			
+			// aapt resource value: 0x7f04000a
+			public const int linearLayoutButtons = 2130968586;
+			
+			// aapt resource value: 0x7f040014
+			public const int linearLayoutFooter = 2130968596;
+			
+			// aapt resource value: 0x7f040004
+			public const int linearLayoutIp = 2130968580;
+			
+			// aapt resource value: 0x7f040007
+			public const int linearLayoutPoort = 2130968583;
+			
+			// aapt resource value: 0x7f040025
+			public const int listViewConfigure = 2130968613;
+			
+			// aapt resource value: 0x7f040013
+			public const int listViewResults = 2130968595;
+			
+			// aapt resource value: 0x7f040018
+			public const int textViewAmount = 2130968600;
+			
+			// aapt resource value: 0x7f040015
+			public const int textViewConnectie = 2130968597;
+			
+			// aapt resource value: 0x7f040001
+			public const int textViewHeader = 2130968577;
+			
+			// aapt resource value: 0x7f040005
+			public const int textViewIp = 2130968581;
+			
+			// aapt resource value: 0x7f040003
+			public const int textViewIpActivity = 2130968579;
+			
+			// aapt resource value: 0x7f040017
+			public const int textViewLayer = 2130968599;
+			
+			// aapt resource value: 0x7f040021
+			public const int textViewLayers = 2130968609;
+			
+			// aapt resource value: 0x7f040022
+			public const int textViewLayersValue = 2130968610;
+			
+			// aapt resource value: 0x7f040019
+			public const int textViewName = 2130968601;
+			
+			// aapt resource value: 0x7f04001d
+			public const int textViewOptionsTitel = 2130968605;
 			
 			// aapt resource value: 0x7f040008
-			public const int textviewFill = 2130968584;
+			public const int textViewPoort = 2130968584;
+			
+			// aapt resource value: 0x7f040002
+			public const int textViewRandom = 2130968578;
+			
+			// aapt resource value: 0x7f040016
+			public const int textViewUpdated = 2130968598;
+			
+			// aapt resource value: 0x7f04001f
+			public const int textViewWidth = 2130968607;
+			
+			// aapt resource value: 0x7f04000b
+			public const int textviewFill = 2130968587;
 			
 			static Id()
 			{
@@ -169,19 +178,22 @@ namespace DrankVetierApp
 		{
 			
 			// aapt resource value: 0x7f020000
-			public const int Ip = 2130837504;
+			public const int Extra = 2130837504;
 			
 			// aapt resource value: 0x7f020001
-			public const int Main = 2130837505;
+			public const int Ip = 2130837505;
 			
 			// aapt resource value: 0x7f020002
-			public const int Main_item = 2130837506;
+			public const int Main = 2130837506;
 			
 			// aapt resource value: 0x7f020003
-			public const int Options = 2130837507;
+			public const int Main_item = 2130837507;
 			
 			// aapt resource value: 0x7f020004
-			public const int Options_Item = 2130837508;
+			public const int Options = 2130837508;
+			
+			// aapt resource value: 0x7f020005
+			public const int Options_Item = 2130837509;
 			
 			static Layout()
 			{

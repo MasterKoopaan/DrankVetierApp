@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataHandler.cs" />
+    <Compile Include="ExtraActivity.cs" />
     <Compile Include="IpData.cs" />
     <Compile Include="ListViewConfigure_Adapter.cs" />
     <Compile Include="ListViewResults_Adapter.cs" />
@@ -81,6 +82,9 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\Ip.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\Extra.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
