@@ -232,6 +232,8 @@
             android:layout_alignParentLeft="true"
             android:layout_below="@id/buttonKaku3" />
         <EditText
+            android:text="06:00:00"
+            android:maxLength="8"
             android:inputType="number"
             android:id="@+id/editText_userTimeOn"
             android:layout_width="200dp"
@@ -247,13 +249,14 @@
             android:layout_alignParentLeft="true"
             android:layout_below="@id/textView_uitleg" />
         <EditText
+            android:text="18:00:00"
             android:inputType="time"
             android:layout_width="200dp"
             android:layout_height="40dp"
             android:id="@+id/editText_userTimeOff"
             android:layout_alignParentRight="true"
             android:layout_below="@id/editText_userTimeOn"
-            android:maxLength="5"
+            android:maxLength="8"
             android:numeric="integer" />
     </RelativeLayout>
 </LinearLayout>
