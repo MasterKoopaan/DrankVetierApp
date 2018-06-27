@@ -5,6 +5,8 @@ using System.Net.Sockets;
 using System.Net;
 using System;
 using Android.Content;
+using System.Timers;
+using Android.Content.Res;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -16,9 +18,8 @@ namespace DrankVetierApp
         // Initialize Object
         public RackConfig rackConfig;
         public RackData rackData;
-        public IpData ipData;
         Socket socket = null;
-            //Timer timerSockets;
+        //Timer timerSockets;
 
         Button buttonConnect, buttonUpdate, buttonExtra, buttonOptions;
         ListView listViewResults;
@@ -40,10 +41,10 @@ namespace DrankVetierApp
             textViewConnectie = FindViewById<TextView>(Resource.Id.textViewConnectie);
             textViewUpdated = FindViewById<TextView>(Resource.Id.textViewUpdated);
 
-            // Get config, data en ip
+            // Get config en data
             rackConfig = DataHandler.GetConfig();
+            rackConfig = new RackConfig(25, 1, "7:Bier");   //temp!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             rackData = DataHandler.GetData();
-            ipData = DataHandler.GetIp();
 
             // Update ListViewResults and Buttons Enabled default state
             if (rackConfig == null)
@@ -60,17 +61,12 @@ namespace DrankVetierApp
             buttonUpdate.Enabled = false;
             textViewConnectie.SetTextColor(Android.Graphics.Color.Red);
 
+        //! NOT IMPLEMENTED !
+        buttonExtra.Enabled = false;
+
             // Go to options to set config
             buttonOptions.Click += (slender, e) =>
             {
-                //if connected, stop connection
-                if (socket != null)
-                {
-                    socket.Close();
-                    socket = null;
-                }
-                UpdateConnectionState(4);
-                //go to Options Acivity
                 Intent nextActivityOptions = new Intent(this, typeof(OptionsActivity));
                 StartActivity(nextActivityOptions);
             };
@@ -94,18 +90,11 @@ namespace DrankVetierApp
                 string result = executeSend(3 + rackConfig.GetLayersCount() * 3 , "a");                 // Send toggle-command to the Arduino
                 if (result != "err")
                 {
-                    try
-                    {
-                        rackData = DataHandler.SetData(result, rackConfig.GetLayersCount());
-                        DataHandler.SaveData(rackData);
-                        ListViewResults_Adapter ConfigAdapter = new ListViewResults_Adapter(this, new Rack(rackConfig.Layers, rackData.amounts));
-                        listViewResults.Adapter = ConfigAdapter;
-                        textViewUpdated.Text = rackData.updated.ToString("h:mm:ss");
-                    } catch
-                    {
-                        Toast.MakeText(this, "Updating failed", ToastLength.Long).Show();
-                    }
-                    
+                    rackData = DataHandler.SetData(result, rackConfig.GetLayersCount());
+                    DataHandler.SaveData(rackData);
+                    ListViewResults_Adapter ConfigAdapter = new ListViewResults_Adapter(this, new Rack(rackConfig.Layers, rackData.amounts));
+                    listViewResults.Adapter = ConfigAdapter;
+                    textViewUpdated.Text = rackData.updated.ToString("h:mm:ss"); 
                 } else
                 {
                     Toast.MakeText(this, "Updating failed", ToastLength.Long).Show();
@@ -116,26 +105,11 @@ namespace DrankVetierApp
             buttonConnect.Click += (sender, e) =>
             {
                 //Validate the user input (IP address and port)
-                if (ipData != null)
+                if (CheckValidIpAddress("192.168.0.100") && CheckValidPort("3300"))
                 {
-                    ConnectSocket(ipData.ip, ipData.poort);
+                    ConnectSocket("192.168.0.100", "3300");
                 }
                 else UpdateConnectionState(3);
-            };
-            buttonConnect.LongClick += (sender, e) =>
-            {
-                Disconnect();
-                //go to SetIp Acivity
-                Intent nextActivitySetIp = new Intent(this, typeof(SetIpActivity));
-                StartActivity(nextActivitySetIp);
-            };
-
-            buttonExtra.Click += (slender, e) =>
-            {
-                Disconnect();
-                //go to extra Acivity
-                Intent nextActivityExtra = new Intent(this, typeof(ExtraActivity));
-                StartActivity(nextActivityExtra);
             };
         }
 
@@ -181,7 +155,12 @@ namespace DrankVetierApp
                     catch (Exception exception)
                     {
                         //timerSockets.Enabled = false;
-                        Disconnect();
+                        if (socket != null)
+                        {
+                            socket.Close();
+                            socket = null;
+                        }
+                        UpdateConnectionState(4);
                     }
                 }
                 else // disconnect socket
@@ -189,7 +168,7 @@ namespace DrankVetierApp
                     socket.Close(); socket = null;
                     //timerSockets.Enabled = false;
                     UpdateConnectionState(4);
-                    
+                    textViewConnectie.Text = "Connect";
                 }
             });
         }
@@ -205,7 +184,6 @@ namespace DrankVetierApp
                     textViewConnectie.Text = "Connected";
                     textViewConnectie.SetTextColor(Android.Graphics.Color.Green);
                     buttonUpdate.Enabled = true;
-                    textViewConnectie.Text = "Disconnect";
                     break;
                 case 3:     //invalid ip or/and poort
                     textViewConnectie.Text = "Invalid Connection data";
@@ -215,19 +193,8 @@ namespace DrankVetierApp
                     textViewConnectie.Text = "Not Connected";
                     textViewConnectie.SetTextColor(Android.Graphics.Color.Red);
                     buttonUpdate.Enabled = false;
-                    textViewConnectie.Text = "Connect";
                     break;
             }
-        }
-
-        public void Disconnect()
-        {
-            if (socket != null)
-            {
-                socket.Close();
-                socket = null;
-            }
-            UpdateConnectionState(4);
         }
 
         public string executeSend(int messagesize, string send)
@@ -267,6 +234,39 @@ namespace DrankVetierApp
                 }
             }
             return result;
+        }
+
+        //Check if the entered IP address is valid.
+        private bool CheckValidIpAddress(string ip)
+        {
+            if (ip != "")
+            {
+                //Check user input against regex (check if IP address is not empty).
+                Regex regex = new Regex("\\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\.|$)){4}\\b");
+                Match match = regex.Match(ip);
+                return match.Success;
+            }
+            else return false;
+        }
+
+        //Check if the entered port is valid.
+        private bool CheckValidPort(string port)
+        {
+            //Check if a value is entered.
+            if (port != "")
+            {
+                Regex regex = new Regex("[0-9]+");
+                Match match = regex.Match(port);
+
+                if (match.Success)
+                {
+                    int portAsInteger = Int32.Parse(port);
+                    //Check if port is in range.
+                    return ((portAsInteger >= 0) && (portAsInteger <= 65535));
+                }
+                else return false;
+            }
+            else return false;
         }
     }
 }
