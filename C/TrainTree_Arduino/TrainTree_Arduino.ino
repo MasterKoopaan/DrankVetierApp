@@ -53,8 +53,8 @@ float threshold;
 int result;
 int minD, maxD;
 byte counter, counter2;
-unsigned long previousmillis = 0;
-const long interval = 10000;
+//unsigned long previousmillis = 0;
+//const long interval = 10000;
 
 
 Servo servo1;
