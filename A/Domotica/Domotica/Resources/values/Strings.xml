@@ -29,4 +29,5 @@
   <string name="abort">Abort</string>
   <string name="textView_uitleg">Here you can change the light input</string>
   <string name="textView_uitleg2">Hero you can cahnge the time at which the kaku has to switch off</string>
+  <string name="textView_uitlegShort">Change the lights on and lights off time:</string>
 </resources>

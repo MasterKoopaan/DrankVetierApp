@@ -60,8 +60,8 @@ namespace Domotica
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f060021
-			public const int abort = 2131099681;
+			// aapt resource value: 0x7f060022
+			public const int abort = 2131099682;
 			
 			// aapt resource value: 0x7f06000a
 			public const int buttonChangePinState = 2131099658;
@@ -84,17 +84,17 @@ namespace Domotica
 			// aapt resource value: 0x7f060008
 			public const int editTextIPPort = 2131099656;
 			
-			// aapt resource value: 0x7f06001f
-			public const int editTextSensorValue = 2131099679;
+			// aapt resource value: 0x7f060020
+			public const int editTextSensorValue = 2131099680;
 			
 			// aapt resource value: 0x7f06001e
 			public const int editText_userTimeOff = 2131099678;
 			
-			// aapt resource value: 0x7f06001c
-			public const int editText_userTimeOn = 2131099676;
+			// aapt resource value: 0x7f06001d
+			public const int editText_userTimeOn = 2131099677;
 			
-			// aapt resource value: 0x7f060020
-			public const int exit = 2131099680;
+			// aapt resource value: 0x7f060021
+			public const int exit = 2131099681;
 			
 			// aapt resource value: 0x7f060000
 			public const int relativeLayout1 = 2131099648;
@@ -129,6 +129,9 @@ namespace Domotica
 			// aapt resource value: 0x7f06001a
 			public const int textViewKaku3 = 2131099674;
 			
+			// aapt resource value: 0x7f06001f
+			public const int textViewSV = 2131099679;
+			
 			// aapt resource value: 0x7f06000e
 			public const int textViewSeekBar1 = 2131099662;
 			
@@ -159,8 +162,8 @@ namespace Domotica
 			// aapt resource value: 0x7f06001b
 			public const int textView_uitleg = 2131099675;
 			
-			// aapt resource value: 0x7f06001d
-			public const int textView_uitleg2 = 2131099677;
+			// aapt resource value: 0x7f06001c
+			public const int textView_uitleg2 = 2131099676;
 			
 			static Id()
 			{
@@ -287,6 +290,9 @@ namespace Domotica
 			
 			// aapt resource value: 0x7f04001c
 			public const int textView_uitleg2 = 2130968604;
+			
+			// aapt resource value: 0x7f04001d
+			public const int textView_uitlegShort = 2130968605;
 			
 			// aapt resource value: 0x7f040001
 			public const int timer_state_text = 2130968577;
