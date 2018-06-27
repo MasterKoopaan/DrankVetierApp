@@ -83,15 +83,15 @@ void loop() {
 
   while (UserClient.connected()) {
     while (UserClient.available())
-      {
-         char inByte = UserClient.read();   // Get byte from the client.
-         if (inByte == '\n') {
-          Read(InMessage, UserClient);
-          InMessage = "";
-         } else {
-          InMessage += inByte;
-         }         
-      }
+    {
+       char inByte = UserClient.read();   // Get byte from the client.
+       if (inByte == '\n') {
+        Read(InMessage, UserClient);
+        InMessage = "";
+       } else {
+        InMessage += inByte;
+       }         
+    }
   }
   Serial.println("User disconnected");
   ConfigureSet = false;
