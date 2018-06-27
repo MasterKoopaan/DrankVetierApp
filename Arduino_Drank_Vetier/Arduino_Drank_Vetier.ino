@@ -9,25 +9,31 @@ int echoPins[3] = {3, 5, 7};      //1, echo pins voor ultrasone sensors
 #define buzzerPin 7     //0, output voor buzzer
 
 #define tempPin   1     //A, leest temperatuur waardes;
+
+#define acceptanceValue 300 
+//acceptanceValue is the maximum accepted lightlevel to return "Closed"
 #define lightPin  0     //A, analoog voor lichtsensor
 
 #define buzzerInterval 1000 // interval voor buzzer
 
 //objecten en libery:
-#include <SPI.h>
+//Enthernet)
+#include <SPI.h>                  
 #include <Ethernet.h>
-#include <Servo.h>
 byte mac[] = { 0x40, 0x6c, 0x8f, 0x36, 0x84, 0x8a }; // Ethernet adapter shield S. Oosterhaven
 int ethPort = 3300;
 IPAddress ip(192, 168, 1, 3);
 EthernetServer server(ethPort);
+//Servo)
+#include <Servo.h>
+Servo servo1; 
 
 //variabelen:
-
 float vardistance;
 int avg;                               //returnwaarde methode gemiddelde ultrasone
 int hoogstewaarde = 0;                 //standaardwaarde voor methode gemiddelde ultrasone
 int laagstewaarde = 999;               //standaardwaarde voor methode gemiddelde ultrasone
+<<<<<<< HEAD
 int totaal;                            //totaalwaarde voor methode gemiddelde ultrasone
 int tempc = 0;                         //standaardwaarde voor returnwaarde uit temp functie
 int samples [5];                       //array gebruikt om temperatuur te berekenen in
@@ -35,12 +41,19 @@ int tijd;                              //var gebruikt voor distance functie
 float afstand;                         //returnwaarde uit ultrasonesensor
 unsigned long previousBlinkMillis = 0, previousBuzzerMillis = 0; //standaardwaarde voor customDelay methode
 bool LedPinState = false, buzzerState = false;
+        //int totaal;                            //totaalwaarde voor methode gemiddelde ultrasone
+        int tempc = 0;                         //standaardwaarde voor returnwaarde uit temp functie
+        int samples [5];                       //array gebruikt om temperatuur te berekenen in 
+
+        //int tijd;                              //var gebruikt voor distance functie
+        //float afstand;                         //returnwaarde uit ultrasonesensor
+unsigned long previousBlinkMillis = 0; //standaardwaarde voor customDelay methode
+bool LedPinState = false;
 String InMessage;             //incoming message
 bool ConfigureSet = false;    //is there a configure
 byte layers = 0;              //the amount of layers, max 99
 int width = 0;                //the width of the rack, max 999
 byte span[ultrasoneSensorenCount];            //the length of space beteen a unit per layer, max 99
-Servo servo1;
 
 void setup() {
   Serial.begin(9600); Serial.println("Domotica project: Drank rek\n");
@@ -234,8 +247,8 @@ float distance(int trigger, int echo) {
   digitalWrite(trigger, HIGH);
   delayMicroseconds(10);
   digitalWrite(trigger, LOW);
-  tijd = pulseIn(echo, HIGH, 12371);
-  afstand = tijd * 0.034 / 2;
+  int tijd = pulseIn(echo, HIGH, 12371);
+  float afstand = tijd*0.034/2;
   Serial.print(" "); Serial.print(afstand);
   return afstand;
 }
@@ -262,8 +275,9 @@ void changeFlag(bool doRaise) { //true raises the flag and visa versa
 }
 
 //light sensor
-bool fridgeClosed(int acceptanceValue) { //acceptanceValue is the maximum accepted lightlevel to return "Closed"
-  if (analogRead(lightPin) < acceptanceValue) {
+bool fridgeClosed(){ //acceptanceValue is the maximum accepted lightlevel to return "Closed"
+  if(analogRead(lightPin) < acceptanceValue){
+>>>>>>> 94d0cb2b3f7553a5e8d06bbc50beffa7e242d62b
     return true;
   }
   else {
