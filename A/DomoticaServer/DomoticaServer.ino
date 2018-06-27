@@ -89,7 +89,7 @@ void setup()
    digitalWrite(ledPin, LOW);
    digitalWrite(infoPin, LOW);
 
-   switchDefault(false);
+   
 
    //Try to get an IP address from the DHCP server.
    if (Ethernet.begin(mac) == 0)
@@ -103,7 +103,7 @@ void setup()
    Serial.print("Input switch on pin "); Serial.println(switchPin);
    Serial.println("Ethernetboard connected (pins 10, 11, 12, 13 and SPI)");
    Serial.println("Connect to DHCP source in local network (blinking led -> waiting for connection)");
-   
+
    //Start the ethernet server.
    server.begin();
 
@@ -116,6 +116,7 @@ void setup()
    Serial.print(" ["); Serial.print(IPnr); Serial.print("] "); 
    Serial.print("  [Testcase: telnet "); Serial.print(Ethernet.localIP()); Serial.print(" "); Serial.print(ethPort); Serial.println("]");
    signalNumber(ledPin, IPnr);
+   switchDefault(false);
 }
 
 void loop()
@@ -223,11 +224,12 @@ void executeCommand(char cmd)
          case 'k':
             for(int i=0; i < 3; i++)
             {
-                KakuStates += stateKaku[i];
+                KakuStates += String(stateKaku[i]);
             }
+            Serial.println(KakuStates);
             intToCharBuf(KakuStates.toInt(), buf, 4);                // convert to charbuffer
             server.write(buf, 4);                             // response is always 4 chars (\n included)
-            Serial.print("Sensor: "); Serial.println(buf);
+            Serial.print("Kaku states: "); Serial.println(buf);
             //kakuStates = "";
             break;
          default:

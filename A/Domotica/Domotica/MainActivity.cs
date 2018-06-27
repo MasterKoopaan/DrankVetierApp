@@ -55,7 +55,7 @@ namespace Domotica
         Button buttonChangePinState;
         TextView textViewServerConnect, textViewTimerStateValue, textViewSeekBar, textViewKaku1, textViewKaku2, textViewKaku3;
         public TextView textViewChangePinStateValue, textViewSensorValue, textViewSensorValue2, textViewDebugValue;
-        EditText editTextIPAddress, editTextIPPort, editText_userTimeOn, editText_userTimeOff;
+        EditText editTextIPAddress, editTextIPPort, editText_userTimeOn, editText_userTimeOff, editTextSensorValue;
         SeekBar seekBar;
 
         Timer timerClock, timerSockets;             // Timers   
@@ -84,7 +84,8 @@ namespace Domotica
             editTextIPAddress = FindViewById<EditText>(Resource.Id.editTextIPAddress);
             editTextIPPort = FindViewById<EditText>(Resource.Id.editTextIPPort);
             editText_userTimeOn = FindViewById<EditText>(Resource.Id.editText_userTimeOn);   
-            editText_userTimeOff = FindViewById<EditText>(Resource.Id.editText_userTimeOff);    
+            editText_userTimeOff = FindViewById<EditText>(Resource.Id.editText_userTimeOff);
+            editTextSensorValue = FindViewById<EditText>(Resource.Id.editTextSensorValue);
 
             seekBar = FindViewById<SeekBar>(Resource.Id.seekBar1);
             textViewSeekBar = FindViewById<TextView>(Resource.Id.textViewSeekBar1);
@@ -105,9 +106,9 @@ namespace Domotica
                 timerSockets.Enabled = true;
             };
 
-            editText_userTimeOn.TextChanged += (slender, e) =>
+            editTextSensorValue.TextChanged += (slender, e) =>
             {
-                randvoorwaarde = Convert.ToInt32(editText_userTimeOn.Text);
+                randvoorwaarde = Convert.ToInt32(textViewSensorValue.Text);
             };
 
             UpdateConnectionState(4, "Disconnected"); // 4 = een out of bound value, dus de default == disconnect
@@ -141,7 +142,7 @@ namespace Domotica
                         }
                         UpdateKakuGUI(executeCommand("k"));
                         //if the value is lower than the value that has been put in by the user the state will switch
-                        if(Convert.ToInt32(textViewSensorValue.Text) < randvoorwaarde && textViewKaku2.Text == "Off")
+                        if(Convert.ToInt32(editTextSensorValue.Text) < randvoorwaarde && textViewKaku2.Text == "Off")
                         {
                             socket.Send(Encoding.ASCII.GetBytes("e")); //kaku 2 switch
                         }
