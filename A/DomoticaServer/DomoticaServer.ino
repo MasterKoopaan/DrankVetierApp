@@ -224,13 +224,17 @@ void executeCommand(char cmd)
          case 'k':
             for(int i=0; i < 3; i++)
             {
-                KakuStates += String(stateKaku[i]);
+              if (stateKaku[i] == true) {
+                KakuStates += "1";
+              } else {
+                KakuStates += "0";
+              }
             }
             Serial.println(KakuStates);
             intToCharBuf(KakuStates.toInt(), buf, 4);                // convert to charbuffer
             server.write(buf, 4);                             // response is always 4 chars (\n included)
             Serial.print("Kaku states: "); Serial.println(buf);
-            //kakuStates = "";
+            KakuStates = "";
             break;
          default:
             digitalWrite(infoPin, LOW);

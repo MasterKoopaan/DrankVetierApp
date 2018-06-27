@@ -108,7 +108,9 @@ namespace Domotica
 
             editTextSensorValue.TextChanged += (slender, e) =>
             {
-                randvoorwaarde = Convert.ToInt32(textViewSensorValue.Text);
+                string t = textViewSensorValue.Text;
+                if (t == "") t = "0";
+                randvoorwaarde = Convert.ToInt32(t);
             };
 
             UpdateConnectionState(4, "Disconnected"); // 4 = een out of bound value, dus de default == disconnect
@@ -142,16 +144,16 @@ namespace Domotica
                         }
                         UpdateKakuGUI(executeCommand("k"));
                         //if the value is lower than the value that has been put in by the user the state will switch
-                        if(Convert.ToInt32(editTextSensorValue.Text) < randvoorwaarde && textViewKaku2.Text == "Off")
+                        if(Convert.ToInt32(textViewSensorValue.Text) < randvoorwaarde && textViewKaku2.Text == "1")
                         {
                             socket.Send(Encoding.ASCII.GetBytes("e")); //kaku 2 switch
                         }
                         if (DateTime.TryParse(editText_userTimeOn.Text, out timeOn) && DateTime.TryParse(editText_userTimeOff.Text, out timeOff))
                         {
-                            if (DateTime.Now > timeOn && DateTime.Now < timeOff && textViewKaku3.Text == "Off")
+                            if (DateTime.Now > timeOn && DateTime.Now < timeOff)
                             {
-                                if (textViewKaku3.Text == "Off") socket.Send(Encoding.ASCII.GetBytes("f")); //kaku 3 switch
-                            } else if (textViewKaku3.Text == "On")
+                                if (textViewKaku3.Text == "0") socket.Send(Encoding.ASCII.GetBytes("f")); //kaku 3 switch
+                            } else if (textViewKaku3.Text == "1")
                             {
                                 socket.Send(Encoding.ASCII.GetBytes("f")); //kaku 3 switch
                             }
