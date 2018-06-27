@@ -7,7 +7,7 @@ int echoPins[3] = {3, 5, 7};      //1, echo pins voor ultrasone sensors
 
 #define servoPin  6     //0, output voor servo motor
 
-#define buzzerInterval 1000   // interval voor buzzer
+#define buzzerInterval 2000   // interval voor buzzer
 #define buzzerPin 7     //0, output voor buzzer
 
 #define tempPin   1     //A, leest temperatuur waardes;
@@ -15,7 +15,7 @@ int echoPins[3] = {3, 5, 7};      //1, echo pins voor ultrasone sensors
 #define lightValue 300   //acceptanceValue is the maximum accepted lightlevel to return "Closed"
 #define lightPin  0     //A, analoog voor lichtsensor
 
-#define countOpenWarningCount 6
+#define countOpenWarningCount 8
 #define inDarkCheckInterval 2000
 
 //objecten en libery:
@@ -77,6 +77,7 @@ void setup() {
 void loop() {
   //wait for client:
   EthernetClient UserClient = server.available();
+  
   millisEventLisener();
   if (!UserClient) {
     blink(ledPin, 200, LedPinState);
@@ -261,10 +262,11 @@ void blink(int pn, int interval, bool &pnState)     //for waiting on client
 void millisEventLisener() {
   currentMillis = millis();
   //if currentMillis looped back to 0, reset privios millis
-  if (currentMillis < previousinDarkMillis || currentMillis < previousBuzzerMillis) {
-    previousinDarkMillis = 0;
-    previousBuzzerMillis = 0;
-  }
+  //if (currentMillis < previousinDarkMillis || currentMillis < previousBuzzerMillis) {
+   // previousinDarkMillis = 0;
+    //previousBuzzerMillis = 0;
+    
+  //}
   inDarkCheck();
   if (openCount >= countOpenWarningCount) {
     activateBuzzer();
@@ -273,15 +275,18 @@ void millisEventLisener() {
 
 //light sensor
 void inDarkCheck(){ //acceptanceValue is the maximum accepted lightlevel to return "Closed"
-  if (currentMillis - previousinDarkMillis >= inDarkCheckInterval) {
-    if(analogRead(lightPin) < lightValue){
+  //Serial.print(currentMillis); Serial.print(" "); Serial.println(previousinDarkMillis);
+  if (currentMillis - previousinDarkMillis > inDarkCheckInterval) {
+    //Serial.println(analogRead(lightPin));
+    previousinDarkMillis = currentMillis;
+    if(analogRead(lightPin) > lightValue){
       openCount += 1;
     }
     else {
       openCount = 0;
     }
   }
-  previousinDarkMillis = currentMillis;
+  
 }
 
 //buzzer
