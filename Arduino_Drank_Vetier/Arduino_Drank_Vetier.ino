@@ -1,4 +1,4 @@
-//Pin nummers:    0 = output  1 = input   A = analoge
+//Pin nummers and difine values:    0 = output  1 = input   A = analoge
 #define ledPin    9    //0, connection indication
 
 #define ultrasoneSensorenCount 2  //de aantal ultrasonice sensors
@@ -6,15 +6,17 @@ int triggerPins[3] = {2, 4, 6};   //0, trigger pins voor ultrasone sensors
 int echoPins[3] = {3, 5, 7};      //1, echo pins voor ultrasone sensors
 
 #define servoPin  6     //0, output voor servo motor
+
+#define buzzerInterval 1000   // interval voor buzzer
 #define buzzerPin 7     //0, output voor buzzer
 
 #define tempPin   1     //A, leest temperatuur waardes;
 
-#define acceptanceValue 300 
-//acceptanceValue is the maximum accepted lightlevel to return "Closed"
+#define lightValue 300   //acceptanceValue is the maximum accepted lightlevel to return "Closed"
 #define lightPin  0     //A, analoog voor lichtsensor
 
-#define buzzerInterval 1000 // interval voor buzzer
+#define countOpenWarningCount 6
+#define inDarkCheckInterval 2000
 
 //objecten en libery:
 //Enthernet)
@@ -29,23 +31,21 @@ EthernetServer server(ethPort);
 Servo servo1; 
 
 //variabelen:
-float vardistance;
-int avg;                               //returnwaarde methode gemiddelde ultrasone
-int hoogstewaarde = 0;                 //standaardwaarde voor methode gemiddelde ultrasone
-int laagstewaarde = 999;               //standaardwaarde voor methode gemiddelde ultrasone
-unsigned long previousBlinkMillis = 0, previousBuzzerMillis = 0; //standaardwaarde voor customDelay methode
-bool LedPinState = false, buzzerState = false;
-        //int totaal;                            //totaalwaarde voor methode gemiddelde ultrasone
-        int tempc = 0;                         //standaardwaarde voor returnwaarde uit temp functie
-        int samples [5];                       //array gebruikt om temperatuur te berekenen in 
-
-        //int tijd;                              //var gebruikt voor distance functie
-        //float afstand;                         //returnwaarde uit ultrasonesensor
-String InMessage;             //incoming message
+//millis)
+unsigned long currentMillis = 0;
+unsigned long previousBlinkMillis = 0;
+unsigned long previousBuzzerMillis = 0;
+unsigned long previousinDarkMillis = 0;
+//configure)
 bool ConfigureSet = false;    //is there a configure
 byte layers = 0;              //the amount of layers, max 99
 int width = 0;                //the width of the rack, max 999
 byte span[ultrasoneSensorenCount];            //the length of space beteen a unit per layer, max 99
+//Rest) 
+bool LedPinState = false; 
+bool buzzerState = false;
+byte openCount = 0;           //times that door has been open
+String InMessage;             //incoming message
 
 void setup() {
   Serial.begin(9600); Serial.println("Domotica project: Drank rek\n");
@@ -77,6 +77,7 @@ void setup() {
 void loop() {
   //wait for client:
   EthernetClient UserClient = server.available();
+  millisEventLisener();
   if (!UserClient) {
     blink(ledPin, 200, LedPinState);
     return;
@@ -84,6 +85,7 @@ void loop() {
   Serial.println("User connected"); digitalWrite(ledPin, HIGH); LedPinState = true;
 
   while (UserClient.connected()) {
+    millisEventLisener();
     while (UserClient.available())
     {
       char inByte = UserClient.read();   // Get byte from the client.
@@ -255,6 +257,44 @@ void blink(int pn, int interval, bool &pnState)     //for waiting on client
   }
 }
 
+//millies events
+void millisEventLisener() {
+  currentMillis = millis();
+  //if currentMillis looped back to 0, reset privios millis
+  if (currentMillis < previousinDarkMillis || currentMillis < previousBuzzerMillis) {
+    previousinDarkMillis = 0;
+    previousBuzzerMillis = 0;
+  }
+  inDarkCheck();
+  if (openCount >= countOpenWarningCount) {
+    activateBuzzer();
+  }
+}
+
+//light sensor
+void inDarkCheck(){ //acceptanceValue is the maximum accepted lightlevel to return "Closed"
+  if (currentMillis - previousinDarkMillis >= inDarkCheckInterval) {
+    if(analogRead(lightPin) < lightValue){
+      openCount += 1;
+    }
+    else {
+      openCount = 0;
+    }
+  }
+  previousinDarkMillis = currentMillis;
+}
+
+//buzzer
+void activateBuzzer() {
+  if (currentMillis - previousBuzzerMillis >= buzzerInterval) {
+    tone(buzzerPin, 750, 1000);
+    previousBuzzerMillis = currentMillis;
+  }
+}
+
+
+
+
 
 //servo
 void changeFlag(bool doRaise) { //true raises the flag and visa versa
@@ -266,25 +306,8 @@ void changeFlag(bool doRaise) { //true raises the flag and visa versa
   }
 }
 
-//light sensor
-bool fridgeClosed(){ //acceptanceValue is the maximum accepted lightlevel to return "Closed"
-  if(analogRead(lightPin) < acceptanceValue){
-    return true;
-  }
-  else {
-    return false;
-  }
-}
-
-//buzzer
-void activateBuzzer(int buzzerpin) {
-  unsigned long currentMillis = millis();
-  if (currentMillis - previousBuzzerMillis >= buzzerInterval) {
-    tone(buzzerpin, 750, 1000);
-    previousBuzzerMillis = currentMillis;
-  }
-}
-
+int tempc = 0;                         //standaardwaarde voor returnwaarde uit temp functie
+int samples [5];                       //array gebruikt om temperatuur te berekenen in 
 //temp sensor
 int temp(int pinNo) {
   for (int i = 0 ; i <= 4; i++) {
@@ -299,21 +322,6 @@ int temp(int pinNo) {
     delay(50);
   }
 }
-
-//
-//
-//string calculate(int pin1, int pin2){
-//
-//    if(layers > 3 && layers <= 0){
-//      Serial.println("Breek het partijkartel!");
-//    }
-//    else{
-//      for(int i = 0; i >= layers; i++;){
-//        span(layers) = distance(trigger, echo);
-//    }
-
-//    }
-//}
 
 
 
