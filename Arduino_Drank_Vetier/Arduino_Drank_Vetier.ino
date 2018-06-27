@@ -33,12 +33,6 @@ float vardistance;
 int avg;                               //returnwaarde methode gemiddelde ultrasone
 int hoogstewaarde = 0;                 //standaardwaarde voor methode gemiddelde ultrasone
 int laagstewaarde = 999;               //standaardwaarde voor methode gemiddelde ultrasone
-<<<<<<< HEAD
-int totaal;                            //totaalwaarde voor methode gemiddelde ultrasone
-int tempc = 0;                         //standaardwaarde voor returnwaarde uit temp functie
-int samples [5];                       //array gebruikt om temperatuur te berekenen in
-int tijd;                              //var gebruikt voor distance functie
-float afstand;                         //returnwaarde uit ultrasonesensor
 unsigned long previousBlinkMillis = 0, previousBuzzerMillis = 0; //standaardwaarde voor customDelay methode
 bool LedPinState = false, buzzerState = false;
         //int totaal;                            //totaalwaarde voor methode gemiddelde ultrasone
@@ -47,8 +41,6 @@ bool LedPinState = false, buzzerState = false;
 
         //int tijd;                              //var gebruikt voor distance functie
         //float afstand;                         //returnwaarde uit ultrasonesensor
-unsigned long previousBlinkMillis = 0; //standaardwaarde voor customDelay methode
-bool LedPinState = false;
 String InMessage;             //incoming message
 bool ConfigureSet = false;    //is there a configure
 byte layers = 0;              //the amount of layers, max 99
@@ -277,7 +269,6 @@ void changeFlag(bool doRaise) { //true raises the flag and visa versa
 //light sensor
 bool fridgeClosed(){ //acceptanceValue is the maximum accepted lightlevel to return "Closed"
   if(analogRead(lightPin) < acceptanceValue){
->>>>>>> 94d0cb2b3f7553a5e8d06bbc50beffa7e242d62b
     return true;
   }
   else {
