@@ -32,7 +32,7 @@ namespace DrankVetierApp
 
             // Get view elements
             editTextIp = FindViewById<EditText>(Resource.Id.editTextIp);
-            editTextPoort = FindViewById<EditText>(Resource.Id.editTextIp);
+            editTextPoort = FindViewById<EditText>(Resource.Id.editTextpoort);
             buttonCancelIp = FindViewById<Button>(Resource.Id.buttonCancelIp);
             buttonSaveIp = FindViewById<Button>(Resource.Id.buttonSaveIp);
 

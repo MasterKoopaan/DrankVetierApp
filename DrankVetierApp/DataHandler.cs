@@ -147,7 +147,7 @@ namespace DrankVetierApp
             var MyIpData = Application.Context.GetSharedPreferences("MyRackData", FileCreationMode.Private);
             string Ip = MyIpData.GetString("Ip", "0");
             string Poort = MyIpData.GetString("Poort", "0");
-            if (Ip != "0" && Poort != "0")
+            if (Ip == "0" && Poort == "0")
             {
                 return new IpData("192.168.0.100", "3300");
             }
