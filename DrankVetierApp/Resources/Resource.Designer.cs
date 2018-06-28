@@ -104,8 +104,8 @@ namespace DrankVetierApp
 			// aapt resource value: 0x7f04000a
 			public const int linearLayoutButtons = 2130968586;
 			
-			// aapt resource value: 0x7f040014
-			public const int linearLayoutFooter = 2130968596;
+			// aapt resource value: 0x7f040013
+			public const int linearLayoutFooter = 2130968595;
 			
 			// aapt resource value: 0x7f040004
 			public const int linearLayoutIp = 2130968580;
@@ -116,14 +116,14 @@ namespace DrankVetierApp
 			// aapt resource value: 0x7f040025
 			public const int listViewConfigure = 2130968613;
 			
-			// aapt resource value: 0x7f040013
-			public const int listViewResults = 2130968595;
+			// aapt resource value: 0x7f040016
+			public const int listViewResults = 2130968598;
 			
 			// aapt resource value: 0x7f040018
 			public const int textViewAmount = 2130968600;
 			
-			// aapt resource value: 0x7f040015
-			public const int textViewConnectie = 2130968597;
+			// aapt resource value: 0x7f040014
+			public const int textViewConnectie = 2130968596;
 			
 			// aapt resource value: 0x7f040001
 			public const int textViewHeader = 2130968577;
@@ -155,8 +155,8 @@ namespace DrankVetierApp
 			// aapt resource value: 0x7f040002
 			public const int textViewRandom = 2130968578;
 			
-			// aapt resource value: 0x7f040016
-			public const int textViewUpdated = 2130968598;
+			// aapt resource value: 0x7f040015
+			public const int textViewUpdated = 2130968597;
 			
 			// aapt resource value: 0x7f04001f
 			public const int textViewWidth = 2130968607;
